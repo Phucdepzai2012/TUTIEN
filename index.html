@@ -1422,16 +1422,17 @@ const SECTS=[
   },
 ];
 
-// Assign banner images from uploaded art
-setTimeout(()=>{
-  if(typeof IMGS !== 'undefined'){
-    SECTS[0].bannerImg=window.IMGS.img2; // Thanh Vân - floating city
-    SECTS[1].bannerImg=window.IMGS.img1; // Ma Hoàng - dark landscape
-    SECTS[2].bannerImg=window.IMGS.img7; // Luyện Thể - floating castle
-    SECTS[3].bannerImg=window.IMGS.img2; // Thiên Cơ - mystical
-    SECTS[4].bannerImg=window.IMGS.img7; // U Minh - dark castle
-  }
-},0);
+// Assign banner images safely
+function assignSectImages(){
+  const imgs=window.IMGS;
+  if(!imgs) return;
+  SECTS[0].bannerImg=imgs.img2;
+  SECTS[1].bannerImg=imgs.img1;
+  SECTS[2].bannerImg=imgs.img7;
+  SECTS[3].bannerImg=imgs.img2;
+  SECTS[4].bannerImg=imgs.img7;
+}
+assignSectImages();
 
 const ZONES=[
   {icon:"🌿",name:"Thảo Nguyên Linh Thú",desc:"Yêu thú cấp thấp · An toàn",mobs:[{n:"Lang Tinh",hp:80,atk:8,exp:20,gold:15},{n:"Linh Trư",hp:120,atk:12,exp:30,gold:25}],minRealm:0,color:"#206020",bg:"rgba(20,50,20,0.3)"},
@@ -1521,58 +1522,128 @@ let _cultInt=null,_autoSave=null;
 /* ======================================================
    AUTH — Popup với Redirect fallback
    ====================================================== */
-window.doLogin=async()=>{
-  const btn=document.querySelector('.btn-google');
-  btn.textContent='⏳ Đang kết nối...';btn.disabled=true;
-  try{
-    // Try popup first (works on most browsers)
-    await signInWithPopup(auth,gProvider);
-  } catch(e){
-    if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'){
-      // Fallback: redirect
-      btn.textContent='🔄 Đang chuyển hướng...';
-      try{ await signInWithRedirect(auth,gProvider); }
-      catch(e2){ showLoginErr(e2.message); }
+/* =====================================================
+   AUTH - Robust login flow
+   ===================================================== */
+window.doLogin = async () => {
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginErrMsg');
+  if(errEl) errEl.style.display='none';
+  if(btn){ btn.innerHTML='<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> Đang kết nối Google...'; btn.disabled=true; }
+
+  try {
+    await signInWithPopup(auth, gProvider);
+    // onAuthStateChanged sẽ tự xử lý sau khi login
+  } catch(err) {
+    console.error('Login error:', err.code, err.message);
+    let userMsg = '';
+    if(err.code === 'auth/popup-blocked') {
+      userMsg = '🔒 Popup bị chặn. Vui lòng cho phép popup và thử lại, hoặc đang thử redirect...';
+      if(errEl){ errEl.textContent=userMsg; errEl.style.display='block'; }
+      // Fallback to redirect
+      try { await signInWithRedirect(auth, gProvider); return; } catch(e2){ userMsg='Lỗi redirect: '+e2.message; }
+    } else if(err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+      userMsg = '❌ Đăng nhập bị hủy. Thử lại nhé!';
+    } else if(err.code === 'auth/network-request-failed') {
+      userMsg = '🌐 Mất kết nối mạng. Kiểm tra internet và thử lại.';
     } else {
-      showLoginErr(e.message);
+      userMsg = '⚠️ Lỗi: ' + (err.message || err.code);
     }
-    btn.textContent='🔑 Đăng Nhập Bằng Google';btn.disabled=false;
+    if(errEl){ errEl.textContent=userMsg; errEl.style.display='block'; }
+    if(btn){ btn.innerHTML=`<svg class="g-ico" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> 🔑 Đăng Nhập Bằng Google`; btn.disabled=false; }
   }
 };
 
-function showLoginErr(msg){
-  const el=document.getElementById('loginErrMsg');
-  if(el){ el.textContent='⚠️ '+msg; el.style.display='block'; }
-  console.error('Auth error:',msg);
+window.doLogout = async () => {
+  try { stopCult(); await saveGame(); } catch(e){ console.warn('Save failed on logout:',e); }
+  await signOut(auth);
+};
+
+// Handle redirect result (fires after redirect login)
+getRedirectResult(auth).then(result => {
+  if(result && result.user) console.log('Redirect login OK:', result.user.displayName);
+}).catch(e => {
+  if(e.code !== 'auth/no-auth-event') console.warn('Redirect result:', e.code);
+});
+
+// Spinner animation
+const styleEl = document.createElement('style');
+styleEl.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+document.head.appendChild(styleEl);
+
+/* =====================================================
+   AUTH STATE HANDLER - Single source of truth
+   ===================================================== */
+onAuthStateChanged(auth, async (user) => {
+  // Safe set background
+  try {
+    const bgEl = document.getElementById('bgImg');
+    const imgs = window.IMGS;
+    if(bgEl && imgs) { bgEl.style.backgroundImage=`url(${imgs.img1})`; bgEl.style.opacity='0.4'; }
+  } catch(e){}
+
+  if(!user) {
+    // Reset login button
+    const btn = document.getElementById('loginBtn');
+    if(btn){ btn.innerHTML=`<svg class="g-ico" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> 🔑 Đăng Nhập Bằng Google`; btn.disabled=false; }
+    showScreen('login');
+    return;
+  }
+
+  // User is logged in
+  G.uid = user.uid;
+  G.name = user.displayName || 'Đạo Hữu';
+  G.photo = user.photoURL || '';
+
+  // Show loading overlay while fetching data
+  showLoadingOverlay('Đang tải dữ liệu tu tiên...');
+
+  try {
+    const ok = await loadGame();
+    hideLoadingOverlay();
+
+    if(ok && G.sectId) {
+      // Returning player with full profile
+      showScreen('game');
+      initGame();
+    } else if(ok && G.gender) {
+      // Has char but no sect yet
+      showScreen('sect');
+      renderSectGrid();
+    } else {
+      // Brand new player
+      showScreen('char');
+      renderCharScreen();
+    }
+  } catch(err) {
+    hideLoadingOverlay();
+    console.error('Load game error:', err);
+    // Still show char creation on error
+    showScreen('char');
+    renderCharScreen();
+  }
+});
+
+function showLoadingOverlay(msg) {
+  let ov = document.getElementById('loadingOv');
+  if(!ov) {
+    ov = document.createElement('div');
+    ov.id = 'loadingOv';
+    ov.style.cssText = `position:fixed;inset:0;z-index:500;background:rgba(2,5,14,0.92);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-family:'ZCOOL XiaoWei',serif;`;
+    ov.innerHTML = `<div style="font-size:3rem;animation:spin 2s linear infinite;margin-bottom:1rem">☯️</div>
+      <div style="color:#00e5c8;font-size:1rem;letter-spacing:0.2em" id="loadingMsg"></div>`;
+    document.body.appendChild(ov);
+  }
+  const m = document.getElementById('loadingMsg');
+  if(m) m.textContent = msg;
+  ov.style.display='flex';
 }
-
-window.doLogout=async()=>{
-  stopCult(); await saveGame(); await signOut(auth);
-};
-
-// Handle redirect result after page reload
-getRedirectResult(auth).then(result=>{
-  if(result&&result.user){
-    // Will be picked up by onAuthStateChanged
-    console.log('Redirect login success');
-  }
-}).catch(e=>{
-  if(e.code!=='auth/no-auth-event') console.error('Redirect result error:',e);
-});
-
-onAuthStateChanged(auth,async user=>{
-  // Set images on page load
-  setTimeout(setRealImages, 100);
-  const bgEl=document.getElementById('bgImg');
-  if(bgEl){ bgEl.style.backgroundImage=`url(${window.IMGS.img1})`; bgEl.style.opacity='0.45'; }
-  if(user){
-    G.uid=user.uid; G.name=user.displayName||'Đạo Hữu'; G.photo=user.photoURL||'';
-    const ok=await loadGame();
-    if(ok&&G.sectId){ showScreen('game'); initGame(); }
-    else if(ok&&G.realmIdx>0){ showScreen('sect'); renderSectGrid(); }
-    else { showScreen('char'); renderCharScreen(); }
-  } else { showScreen('login'); }
-});
+function hideLoadingOverlay() {
+  const ov=document.getElementById('loadingOv');
+  if(ov) ov.style.display='none';
+}
 
 /* ======================================================
    SAVE / LOAD
@@ -1594,42 +1665,71 @@ async function saveGame(){
     realmScore:G.realmIdx*9+G.stage, lastSave:Date.now()
   };
   await set(ref(db,'players/'+G.uid),d);
+  console.log('Game saved');
 }
 async function loadGame(){
-  const snap=await get(ref(db,'players/'+G.uid));
-  if(snap.exists()){ Object.assign(G,snap.val()); G.isCultivating=false; return true; }
-  return false;
+  try {
+    const snap = await get(ref(db, 'players/' + G.uid));
+    if(snap.exists()) {
+      const data = snap.val();
+      Object.assign(G, data);
+      G.isCultivating = false;
+      G.cultInterval = null;
+      // Ensure arrays are proper
+      if(!Array.isArray(G.skills)) G.skills = [0,2];
+      if(!G.skillLevels) G.skillLevels = {0:1,2:1};
+      if(!Array.isArray(G.inventory)) G.inventory = [];
+      if(!G.sectMissionsProgress) G.sectMissionsProgress = {};
+      G.pickedSkills = [];
+      console.log('Game loaded OK, realmIdx:', G.realmIdx, 'sectId:', G.sectId);
+      return true;
+    }
+    console.log('No save found - new player');
+    return false;
+  } catch(e) {
+    console.error('loadGame error:', e);
+    throw e;
+  }
 }
 
 /* ======================================================
    SCREEN MANAGEMENT
    ====================================================== */
 function showScreen(id){
+  console.log('showScreen:', id);
   ['loginScreen','charScreen','sectScreen','gameScreen'].forEach(s=>{
-    document.getElementById(s).classList.toggle('hidden',s!==id+'Screen');
+    const el = document.getElementById(s);
+    if(el) el.classList.toggle('hidden', s !== id+'Screen');
   });
-  // Change background per screen
-  const bgEl=document.getElementById('bgImg');
-  if(!bgEl) return;
-  if(id==='login'||id==='char'){
-    bgEl.style.backgroundImage=`url(${window.IMGS.img1})`;bgEl.style.opacity='0.4';
-  } else if(id==='sect'){
-    bgEl.style.backgroundImage=`url(${window.IMGS.img7})`;bgEl.style.opacity='0.35';
-  } else if(id==='game'){
-    const sect=SECTS.find(s=>s.id===G.sectId);
-    bgEl.style.backgroundImage=`url(${sect&&sect.bannerImg?sect.bannerImg:window.IMGS.img7})`;
-    bgEl.style.opacity='0.3';
-  }
+  // Change background per screen (safe)
+  try {
+    const bgEl=document.getElementById('bgImg');
+    const imgs=window.IMGS;
+    if(!bgEl || !imgs) return;
+    if(id==='login'||id==='char'){
+      bgEl.style.backgroundImage=`url(${imgs.img1})`;bgEl.style.opacity='0.4';
+    } else if(id==='sect'){
+      bgEl.style.backgroundImage=`url(${imgs.img7})`;bgEl.style.opacity='0.35';
+    } else if(id==='game'){
+      const sect=SECTS.find(s=>s.id===G.sectId);
+      bgEl.style.backgroundImage=`url(${sect&&sect.bannerImg?sect.bannerImg:imgs.img7})`;
+      bgEl.style.opacity='0.3';
+    }
+  } catch(e){ console.warn('showScreen BG error:', e); }
 }
 
 /* ======================================================
    CHARACTER CREATION
    ====================================================== */
 function renderCharScreen(){
-  setRealImages();
+  console.log('renderCharScreen() called');
+  try { setRealImages(); } catch(e){}
   // Set login/char background
-  const bgEl=document.getElementById('bgImg');
-  if(bgEl){ bgEl.style.backgroundImage=`url(${window.IMGS.img1})`; bgEl.style.opacity='0.5'; }
+  try {
+    const bgEl=document.getElementById('bgImg');
+    const imgs=window.IMGS;
+    if(bgEl && imgs){ bgEl.style.backgroundImage=`url(${imgs.img1})`; bgEl.style.opacity='0.5'; }
+  } catch(e){}
   // Aptitude grid
   const ag=document.getElementById('aptGrid');
   ag.innerHTML=APTITUDES.map((a,i)=>
@@ -1701,13 +1801,14 @@ window.createChar=()=>{
    SECT SELECTION
    ====================================================== */
 function renderSectGrid(){
+  assignSectImages();
   const grid=document.getElementById('sectGrid');
   grid.innerHTML=SECTS.map(s=>
     `<div class="sect-card${G.sectId===s.id?' selected':''}" id="sc-${s.id}"
       style="box-shadow:${G.sectId===s.id?`0 0 30px ${s.glowColor}40`:'none'}"
       onclick="pickSect('${s.id}')">
       <div class="sect-banner" style="background:${s.bg};position:relative;overflow:hidden;">
-        <img src="${s.bannerImg||window.IMGS.img7}" alt="${s.vn}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4;filter:brightness(0.7) saturate(1.3);">
+        <img src="${s.bannerImg||(window.IMGS?window.IMGS.img7:'')}" alt="${s.vn}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4;filter:brightness(0.7) saturate(1.3);">
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,${s.glowColor}30 0%,${s.bg.split(',')[1]||'rgba(0,0,0,0.4)'} 80%)"></div>
         <div class="sect-banner-icon" style="color:${s.glowColor};position:relative;z-index:1;">${s.icon}</div>
       </div>
@@ -1727,8 +1828,12 @@ window.pickSect=id=>{
   G.sectId=id;
   // Preview sect background
   const sect=SECTS.find(s=>s.id===id);
-  const bgEl=document.getElementById('bgImg');
-  if(bgEl&&sect&&sect.bannerImg){ bgEl.style.backgroundImage=`url(${sect.bannerImg})`; bgEl.style.opacity='0.35'; }
+  try{
+    const bgEl=document.getElementById('bgImg');
+    const imgs=window.IMGS;
+    if(bgEl&&sect&&sect.bannerImg){ bgEl.style.backgroundImage=`url(${sect.bannerImg})`; bgEl.style.opacity='0.35'; }
+    else if(bgEl&&imgs){ bgEl.style.backgroundImage=`url(${imgs.img7})`; bgEl.style.opacity='0.35'; }
+  }catch(e){}
   document.querySelectorAll('.sect-card').forEach(c=>{
     const sid=c.id.replace('sc-','');
     const s=SECTS.find(x=>x.id===sid);
@@ -1741,8 +1846,9 @@ window.joinSect=()=>{
   if(!G.sectId){ notify('⚠️ Chọn tông môn trước!'); return; }
   const sect=SECTS.find(s=>s.id===G.sectId);
   // Switch background based on sect
-  const bgEl=document.getElementById('bgImg');
-  if(bgEl&&sect&&sect.bannerImg){ bgEl.style.backgroundImage=`url(${sect.bannerImg})`; }
+  try{const bgEl=document.getElementById('bgImg');const imgs=window.IMGS;
+  if(bgEl&&sect&&sect.bannerImg){bgEl.style.backgroundImage=`url(${sect.bannerImg})`;}
+  else if(bgEl&&imgs){bgEl.style.backgroundImage=`url(${imgs.img7})`;}}catch(e){}
   // Apply sect bonus
   if(G.sectId==='qingyun'){G.atk+=5;G.spd+=3;}
   else if(G.sectId==='mohung'){G.atk+=10;G.def-=3;}
@@ -1758,31 +1864,43 @@ window.joinSect=()=>{
    GAME INIT
    ====================================================== */
 function setRealImages(){
+  const imgs=window.IMGS;
+  if(!imgs) return;
   const mi=document.getElementById('male-char-img');
   const fi=document.getElementById('female-char-img');
-  if(mi) mi.src=window.IMGS.img4;
-  if(fi) fi.src=window.IMGS.img6;
+  if(mi) mi.src=imgs.img4;
+  if(fi) fi.src=imgs.img6;
 }
 
 function initGame(){
-  setRealImages();
+  console.log('initGame() called, G.uid:', G.uid, 'G.name:', G.name);
+  try { setRealImages(); } catch(e){ console.warn('setRealImages failed:', e); }
   // Set dynamic background based on screen
-  const bgEl=document.getElementById('bgImg');
-  if(bgEl) bgEl.style.backgroundImage=`url(${window.IMGS.img1})`;
-  updateTopbar();
-  renderCharSvg();
-  renderStats();
-  renderRealm();
-  renderZones();
-  renderSkillList();
-  renderShop('pills');
-  renderPaths();
-  renderSectMissions();
-  renderArena();
-  renderWorldEvents();
-  loadArenaLeaderboard();
-  _autoSave=setInterval(()=>saveGame(),30000);
-  notify(`✨ Chào mừng ${G.name} trở lại!`);
+  try {
+    const bgEl=document.getElementById('bgImg');
+    const imgs=window.IMGS;
+    if(bgEl && imgs) {
+      const sect=SECTS.find(s=>s.id===G.sectId);
+      bgEl.style.backgroundImage=`url(${sect&&sect.bannerImg?sect.bannerImg:imgs.img7})`;
+      bgEl.style.opacity='0.3';
+    }
+  } catch(e){ console.warn('BG set failed:', e); }
+  try { updateTopbar(); } catch(e){ console.error('updateTopbar failed:', e); }
+  try { renderCharSvg(); } catch(e){ console.error('renderCharSvg failed:', e); }
+  try { renderStats(); } catch(e){ console.error('renderStats:', e); }
+  try { renderRealm(); } catch(e){ console.error('renderRealm:', e); }
+  try { renderZones(); } catch(e){ console.error('renderZones:', e); }
+  try { renderSkillList(); } catch(e){ console.error('renderSkillList:', e); }
+  try { renderShop('pills'); } catch(e){ console.error('renderShop:', e); }
+  try { renderPaths(); } catch(e){ console.error('renderPaths:', e); }
+  try { renderSectMissions(); } catch(e){ console.error('renderSectMissions:', e); }
+  try { renderArena(); } catch(e){ console.error('renderArena:', e); }
+  try { renderWorldEvents(); } catch(e){ console.error('renderWorldEvents:', e); }
+  try { loadArenaLeaderboard(); } catch(e){ console.error('loadArenaLeaderboard:', e); }
+  if(_autoSave) clearInterval(_autoSave);
+  _autoSave = setInterval(()=>{ saveGame().catch(e=>console.warn('autosave failed:',e)); }, 30000);
+  notify(`✨ Chào mừng trở lại, ${G.name}!`, 'var(--jade)');
+  console.log('initGame() COMPLETE');
 }
 
 /* ======================================================
@@ -1810,9 +1928,12 @@ function updateTopbar(){
 
 function renderCharSvg(){
   const el=document.getElementById('charDisplaySvg');
+  if(!el) return;
   const sect=SECTS.find(s=>s.id===G.sectId);
   const auraColor=sect?sect.glowColor:'#00e5c8';
-  const charImg=G.gender==='male'?window.IMGS.img4:window.IMGS.img6;
+  const imgs=window.IMGS;
+  const charImg=imgs?(G.gender==='male'?imgs.img4:imgs.img6):'';
+  if(!charImg){ el.innerHTML='<div style="font-size:4rem;text-align:center;padding:20px">'+(G.gender==='male'?'🧙‍♂️':'🧙‍♀️')+'</div>'; return; }
   el.innerHTML=`<div style="position:relative;width:120px;margin:0 auto;cursor:pointer;">
     <div style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);
       width:140px;height:140px;border-radius:50%;
