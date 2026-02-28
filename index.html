@@ -3,1283 +3,2508 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tu Tiên - Vấn Đạo Tiên Giới</title>
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<title>問道仙途 · Vấn Đạo Tiên Đồ</title>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=Noto+Serif+SC:wght@300;400;600;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --jade: #00e5c8;
-    --jade-dark: #00b39a;
-    --gold: #ffd700;
-    --gold-dim: #c8a800;
-    --crimson: #e02060;
-    --bg-deep: #030812;
-    --bg-dark: #060f1e;
-    --bg-mid: #0a1628;
-    --bg-panel: rgba(6,15,30,0.92);
-    --border-jade: rgba(0,229,200,0.3);
-    --border-gold: rgba(255,215,0,0.3);
-    --text-main: #d4e8ff;
-    --text-dim: #6a9cbf;
-    --text-gold: #ffd700;
-    --text-jade: #00e5c8;
-  }
+/* ============================================================
+   DESIGN SYSTEM — 水墨仙侠 INK-WASH XIANXIA
+   ============================================================ */
+:root {
+  /* Core palette */
+  --ink0:#02050e; --ink1:#060c1a; --ink2:#0b1525; --ink3:#121e35;
+  --ink4:#1a2a45; --ink5:rgba(20,35,65,0.85);
+  /* Jade — spiritual energy */
+  --jade:hsl(172,90%,55%); --jade2:hsl(172,80%,40%); --jade3:hsl(172,60%,25%);
+  --jade-glow:0 0 20px hsl(172,90%,55%,0.6),0 0 60px hsl(172,80%,45%,0.3);
+  /* Gold — dao, fate, power */
+  --gold:hsl(42,100%,58%); --gold2:hsl(42,90%,40%); --gold-glow:0 0 20px hsl(42,100%,55%,0.5);
+  /* Crimson — ma dao, blood */
+  --crim:hsl(345,85%,52%); --crim2:hsl(345,75%,35%); --crim-glow:0 0 20px hsl(345,85%,52%,0.5);
+  /* Ice — sword, clarity */
+  --ice:hsl(200,80%,72%); --ice2:hsl(200,60%,50%);
+  /* Body — earth, iron */
+  --earth:hsl(25,70%,50%); --earth2:hsl(25,55%,35%);
+  /* Text */
+  --tx1:#e8f0ff; --tx2:#8fa8cc; --tx3:#4a6a90; --tx4:#2a3a55;
+  --tx-gold:var(--gold); --tx-jade:var(--jade); --tx-crim:var(--crim);
+  /* Borders */
+  --b-jade:1px solid hsl(172,60%,35%,0.4);
+  --b-gold:1px solid hsl(42,80%,40%,0.35);
+  --b-crim:1px solid hsl(345,70%,40%,0.4);
+  /* Panels */
+  --panel:linear-gradient(155deg,rgba(11,21,37,0.96) 0%,rgba(6,12,26,0.98) 100%);
+  --panel-glow:inset 0 1px 0 rgba(0,229,200,0.07),0 8px 40px rgba(0,0,0,0.6);
+  /* Font stacks */
+  --f-title:'Ma Shan Zheng',cursive;
+  --f-sub:'ZCOOL QingKe HuangYou',cursive;
+  --f-ui:'ZCOOL XiaoWei',serif;
+  --f-body:'Noto Serif SC',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink0); color:var(--tx1);
+  font-family:var(--f-body); min-height:100vh;
+  overflow-x:hidden; cursor:default;
+}
+/* Custom cursor */
+body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='3' fill='%2300e5c8' opacity='0.8'/%3E%3Ccircle cx='10' cy='10' r='7' fill='none' stroke='%2300e5c8' stroke-width='1' opacity='0.4'/%3E%3C/svg%3E") 10 10, crosshair;}
+/* Scrollbar */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:var(--ink1);}
+::-webkit-scrollbar-thumb{background:var(--jade3);border-radius:2px;}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+/* ============================================================
+   BACKGROUND FX LAYERS
+   ============================================================ */
+#scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.mist-layer{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 120% 60% at 50% 0%,
+    hsl(210,60%,10%,0.7) 0%,transparent 60%);
+}
+.stars-canvas{position:absolute;inset:0;}
+.aurora{
+  position:absolute;top:0;left:0;right:0;height:40%;
+  background:linear-gradient(180deg,
+    hsl(172,70%,8%,0.4) 0%,
+    hsl(200,60%,12%,0.3) 30%,
+    transparent 100%);
+  filter:blur(40px);
+  animation:auroraMove 12s ease-in-out infinite alternate;
+}
+@keyframes auroraMove{
+  0%{transform:scaleX(1) translateX(0);}
+  100%{transform:scaleX(1.1) translateX(2%);}
+}
+/* Mountains */
+.mountains{
+  position:absolute;bottom:0;left:0;right:0;height:45%;
+  pointer-events:none;
+}
 
-  body {
-    background: var(--bg-deep);
-    color: var(--text-main);
-    font-family: 'Noto Serif SC', serif;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
+/* ============================================================
+   PARTICLES
+   ============================================================ */
+.spore{
+  position:absolute;border-radius:50%;pointer-events:none;
+  animation:sporeFloat linear infinite;opacity:0;
+}
+@keyframes sporeFloat{
+  0%{opacity:0;transform:translateY(0) scale(0.5);}
+  15%{opacity:1;}80%{opacity:0.6;}
+  100%{opacity:0;transform:translateY(-95vh) scale(1.8);}
+}
 
-  /* ========== PARTICLES ========== */
-  #particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-  .particle {
-    position:absolute; border-radius:50%;
-    animation: floatUp linear infinite;
-    opacity:0;
-  }
-  @keyframes floatUp {
-    0%{opacity:0;transform:translateY(100vh) scale(0);}
-    10%{opacity:0.8;}
-    90%{opacity:0.4;}
-    100%{opacity:0;transform:translateY(-20px) scale(1.5);}
-  }
+/* ============================================================
+   SCREENS
+   ============================================================ */
+.screen{position:relative;z-index:10;}
+.hidden{display:none!important;}
 
-  /* ========== BACKGROUND ========== */
-  .bg-gradient {
-    position: fixed; inset:0; z-index:0;
-    background: 
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,80,120,0.5) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,40,80,0.4) 0%, transparent 50%),
-      radial-gradient(ellipse 40% 60% at 20% 60%, rgba(0,60,100,0.3) 0%, transparent 50%),
-      var(--bg-deep);
-  }
+/* ============================================================
+   SCREEN 1 — LOGIN
+   ============================================================ */
+#loginScreen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:2rem;text-align:center;
+}
+.title-wrap{margin-bottom:2.5rem;position:relative;}
+.title-main{
+  font-family:var(--f-title);
+  font-size:clamp(3.5rem,10vw,7rem);
+  background:linear-gradient(160deg,var(--gold) 0%,hsl(42,100%,75%) 40%,var(--jade) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px hsl(42,100%,55%,0.4));
+  animation:titleShimmer 4s ease-in-out infinite;
+  line-height:1;letter-spacing:0.05em;
+}
+@keyframes titleShimmer{
+  0%,100%{filter:drop-shadow(0 0 30px hsl(42,100%,55%,0.4));}
+  50%{filter:drop-shadow(0 0 50px hsl(172,100%,55%,0.5)) drop-shadow(0 0 80px hsl(42,100%,55%,0.3));}
+}
+.title-sub{
+  font-family:var(--f-sub);
+  font-size:clamp(0.9rem,2.5vw,1.3rem);
+  color:var(--tx2);letter-spacing:0.4em;margin-top:0.8rem;
+  text-shadow:0 0 20px hsl(172,70%,50%,0.3);
+}
+.brush-line{
+  width:300px;height:2px;margin:1.5rem auto 0;
+  background:linear-gradient(90deg,transparent,var(--jade2),transparent);
+  position:relative;
+}
+.brush-line::before,.brush-line::after{
+  content:'◆';position:absolute;top:50%;transform:translateY(-50%);
+  font-size:0.5rem;color:var(--gold2);
+}
+.brush-line::before{left:30%;}
+.brush-line::after{right:30%;}
 
-  /* Floating islands */
-  .islands { position:fixed; inset:0; z-index:0; pointer-events:none; }
-  .island {
-    position:absolute;
-    background: linear-gradient(180deg, rgba(0,150,180,0.15) 0%, rgba(0,80,120,0.08) 100%);
-    border-radius: 50% 50% 40% 40%;
-    filter: blur(1px);
-    animation: islandFloat ease-in-out infinite;
-  }
-  @keyframes islandFloat {
-    0%,100%{transform:translateY(0px);}
-    50%{transform:translateY(-15px);}
-  }
+.login-box{
+  background:linear-gradient(150deg,
+    rgba(11,21,45,0.97) 0%,
+    rgba(6,12,28,0.99) 100%);
+  border:1px solid hsl(172,50%,30%,0.4);
+  border-radius:20px;padding:2.8rem 2.5rem;
+  max-width:440px;width:100%;
+  box-shadow:0 0 80px hsl(172,60%,20%,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+  backdrop-filter:blur(20px);
+  position:relative;overflow:hidden;
+}
+.login-box::before{
+  content:'';position:absolute;top:-1px;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--jade),transparent);
+}
+.login-box::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 40% at 50% 0%,
+    hsl(172,60%,20%,0.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.login-lore{
+  font-size:0.82rem;color:var(--tx2);line-height:2;
+  font-style:italic;margin-bottom:2rem;
+  border-left:2px solid var(--jade2);padding-left:1rem;
+  text-align:left;
+}
+.btn-google{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  width:100%;padding:15px 24px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;cursor:pointer;
+  color:var(--tx1);font-family:var(--f-ui);font-size:1rem;
+  letter-spacing:0.08em;transition:all 0.35s ease;
+  position:relative;overflow:hidden;
+}
+.btn-google::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,
+    hsl(172,60%,20%,0.15) 0%,
+    hsl(200,60%,20%,0.15) 100%);
+  opacity:0;transition:opacity 0.3s;
+}
+.btn-google:hover{
+  border-color:hsl(172,60%,40%,0.5);
+  box-shadow:0 0 30px hsl(172,70%,40%,0.15);
+  transform:translateY(-2px);
+}
+.btn-google:hover::before{opacity:1;}
+.btn-google:active{transform:translateY(0);}
+.g-ico{width:22px;height:22px;flex-shrink:0;}
 
-  /* ========== SCREENS ========== */
-  .screen { position:relative; z-index:10; }
-  .hidden { display:none!important; }
+/* ============================================================
+   SCREEN 2 — CHARACTER CREATION
+   ============================================================ */
+#charScreen{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:2rem;
+}
+.char-header{
+  text-align:center;margin-bottom:2.5rem;padding-top:2rem;
+}
+.char-header h2{
+  font-family:var(--f-title);font-size:2.8rem;
+  color:var(--gold);text-shadow:var(--gold-glow);
+  letter-spacing:0.1em;
+}
+.char-header p{font-family:var(--f-sub);color:var(--tx2);font-size:0.9rem;letter-spacing:0.2em;margin-top:0.4rem;}
 
-  /* ========== LOGIN SCREEN ========== */
-  #loginScreen {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    min-height:100vh; padding:2rem; text-align:center;
-  }
+.char-create-wrap{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2.5rem;max-width:900px;width:100%;
+}
+@media(max-width:700px){.char-create-wrap{grid-template-columns:1fr;}}
 
-  .login-title {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: clamp(3rem, 8vw, 6rem);
-    color: var(--text-jade);
-    text-shadow: 0 0 40px rgba(0,229,200,0.7), 0 0 80px rgba(0,229,200,0.3);
-    letter-spacing: 0.1em;
-    animation: titleGlow 3s ease-in-out infinite;
-    line-height: 1.1;
-  }
-  .login-subtitle {
-    font-family: 'ZCOOL XiaoWei', serif;
-    font-size: clamp(1rem, 3vw, 1.5rem);
-    color: var(--gold);
-    letter-spacing: 0.3em;
-    margin: 1rem 0 3rem;
-    opacity: 0.8;
-    text-shadow: 0 0 20px rgba(255,215,0,0.4);
-  }
+/* GENDER CARDS */
+.gender-section h3{
+  font-family:var(--f-ui);color:var(--tx-jade);font-size:0.85rem;
+  letter-spacing:0.2em;margin-bottom:1rem;text-align:center;
+}
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.gender-card{
+  position:relative;border-radius:16px;cursor:pointer;
+  overflow:hidden;transition:all 0.4s ease;
+  border:2px solid transparent;
+  background:linear-gradient(180deg,var(--ink3) 0%,var(--ink1) 100%);
+  padding:0;aspect-ratio:3/4;
+}
+.gender-card.selected{
+  border-color:var(--jade);
+  box-shadow:0 0 30px hsl(172,80%,45%,0.3),inset 0 0 30px hsl(172,70%,30%,0.1);
+}
+.gender-card:hover{transform:translateY(-4px);border-color:hsl(172,60%,35%,0.6);}
+.gender-bg{
+  position:absolute;inset:0;
+  transition:opacity 0.4s;
+}
+/* Male card background */
+.gender-card.male .gender-bg{
+  background:linear-gradient(180deg,
+    hsl(220,60%,12%) 0%,
+    hsl(200,50%,8%) 60%,
+    hsl(220,40%,6%) 100%);
+}
+/* Female card background */
+.gender-card.female .gender-bg{
+  background:linear-gradient(180deg,
+    hsl(330,40%,10%) 0%,
+    hsl(300,30%,8%) 60%,
+    hsl(330,30%,6%) 100%);
+}
+/* SVG Characters */
+.char-svg{
+  position:absolute;inset:0;display:flex;
+  align-items:flex-end;justify-content:center;
+  padding-bottom:10%;
+}
+.char-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:1rem;text-align:center;
+  background:linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 100%);
+}
+.char-label h4{
+  font-family:var(--f-title);font-size:1.2rem;
+  color:var(--gold);text-shadow:var(--gold-glow);
+}
+.char-label p{font-size:0.65rem;color:var(--tx2);letter-spacing:0.1em;margin-top:2px;}
+.selected-badge{
+  position:absolute;top:10px;right:10px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--jade);display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;color:black;font-weight:900;
+  opacity:0;transition:opacity 0.3s;
+}
+.gender-card.selected .selected-badge{opacity:1;}
 
-  @keyframes titleGlow {
-    0%,100%{text-shadow:0 0 40px rgba(0,229,200,0.7),0 0 80px rgba(0,229,200,0.3);}
-    50%{text-shadow:0 0 60px rgba(0,229,200,1),0 0 120px rgba(0,229,200,0.5),0 0 200px rgba(0,229,200,0.2);}
-  }
+/* RIGHT SIDE FORM */
+.char-form-section{display:flex;flex-direction:column;gap:16px;}
+.input-group label{
+  display:block;font-family:var(--f-ui);font-size:0.75rem;
+  color:var(--tx2);letter-spacing:0.15em;margin-bottom:6px;
+}
+.inp{
+  width:100%;padding:11px 16px;
+  background:rgba(0,15,35,0.6);
+  border:1px solid rgba(0,229,200,0.2);
+  border-radius:10px;color:var(--tx1);
+  font-family:var(--f-body);font-size:0.95rem;
+  transition:all 0.3s;outline:none;
+}
+.inp:focus{border-color:var(--jade2);box-shadow:0 0 15px hsl(172,60%,40%,0.15);}
+.inp::placeholder{color:var(--tx3);}
 
-  .login-card {
-    background: linear-gradient(135deg, rgba(0,30,60,0.9) 0%, rgba(0,15,35,0.95) 100%);
-    border: 1px solid var(--border-jade);
-    border-radius: 16px;
-    padding: 3rem;
-    max-width: 420px; width:100%;
-    box-shadow: 0 0 60px rgba(0,229,200,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
-    backdrop-filter: blur(20px);
-  }
+/* Aptitude (Thiên Phú) selection */
+.apt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.apt-card{
+  padding:8px 4px;border-radius:8px;cursor:pointer;text-align:center;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(0,10,25,0.4);transition:all 0.25s;
+}
+.apt-card:hover{transform:scale(1.05);}
+.apt-card.selected{border-color:var(--jade);background:rgba(0,229,200,0.08);}
+.apt-card .apt-icon{font-size:1.3rem;display:block;}
+.apt-card .apt-name{font-size:0.6rem;font-family:var(--f-ui);color:var(--tx2);display:block;margin-top:3px;}
+.apt-card.selected .apt-name{color:var(--jade);}
 
-  .login-card h3 {
-    font-family: 'ZCOOL XiaoWei', serif;
-    font-size: 1.1rem;
-    color: var(--text-dim);
-    margin-bottom: 2rem;
-    letter-spacing: 0.1em;
-  }
+.section-title{
+  font-family:var(--f-ui);font-size:0.78rem;color:var(--tx2);
+  letter-spacing:0.2em;margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-title::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(0,229,200,0.3),transparent);
+}
 
-  .btn-google {
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    width:100%; padding:14px 24px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 10px; cursor:pointer;
-    color: var(--text-main); font-family: 'Noto Serif SC', serif;
-    font-size: 1rem; letter-spacing: 0.05em;
-    transition: all 0.3s ease;
-    position:relative; overflow:hidden;
-  }
-  .btn-google::before {
-    content:''; position:absolute; inset:0;
-    background: linear-gradient(135deg, rgba(0,229,200,0.1) 0%, rgba(0,100,160,0.1) 100%);
-    opacity:0; transition: opacity 0.3s;
-  }
-  .btn-google:hover::before { opacity:1; }
-  .btn-google:hover {
-    border-color: var(--border-jade);
-    box-shadow: 0 0 20px rgba(0,229,200,0.2);
-    transform: translateY(-2px);
-  }
-  .google-icon { width:22px; height:22px; flex-shrink:0; }
+.btn-start{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,
+    hsl(172,60%,20%,0.6) 0%,
+    hsl(200,70%,20%,0.6) 100%);
+  border:1px solid var(--jade2);border-radius:12px;
+  color:var(--jade);font-family:var(--f-sub);font-size:1.1rem;
+  letter-spacing:0.15em;cursor:pointer;
+  transition:all 0.35s;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  margin-top:auto;
+}
+.btn-start:hover{
+  background:linear-gradient(135deg,
+    hsl(172,60%,28%,0.7) 0%,
+    hsl(200,70%,28%,0.7) 100%);
+  box-shadow:var(--jade-glow),0 4px 20px rgba(0,0,0,0.4);
+  transform:translateY(-2px);
+}
 
-  .divider {
-    height:1px; background: linear-gradient(90deg, transparent, var(--border-jade), transparent);
-    margin: 2rem 0;
-  }
+/* ============================================================
+   SCREEN 3 — SECT SELECTION
+   ============================================================ */
+#sectScreen{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:2rem;
+}
+.sect-header{text-align:center;padding-top:2rem;margin-bottom:2.5rem;}
+.sect-header h2{
+  font-family:var(--f-title);font-size:2.5rem;
+  color:var(--gold);text-shadow:var(--gold-glow);letter-spacing:0.1em;
+}
+.sect-header p{font-family:var(--f-sub);color:var(--tx2);letter-spacing:0.2em;margin-top:0.4rem;font-size:0.85rem;}
 
-  .lore-text {
-    font-size: 0.8rem; color: var(--text-dim); line-height: 1.8;
-    font-style: italic;
-  }
+.sect-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;max-width:1100px;width:100%;
+  margin-bottom:2rem;
+}
+.sect-card{
+  border-radius:16px;cursor:pointer;overflow:hidden;
+  position:relative;transition:all 0.4s ease;
+  border:1px solid rgba(255,255,255,0.06);
+  background:linear-gradient(160deg,var(--ink3) 0%,var(--ink1) 100%);
+}
+.sect-card:hover{transform:translateY(-5px);}
+.sect-card.selected{border-width:2px;}
+.sect-banner{
+  height:140px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.sect-banner-icon{
+  font-size:4.5rem;
+  filter:drop-shadow(0 0 20px currentColor);
+  animation:iconPulse 3s ease-in-out infinite;
+  position:relative;z-index:1;
+}
+@keyframes iconPulse{
+  0%,100%{transform:scale(1);}50%{transform:scale(1.08);}
+}
+.sect-body{padding:16px;}
+.sect-name-cn{
+  font-family:var(--f-title);font-size:1.6rem;
+  letter-spacing:0.1em;
+}
+.sect-name-vn{
+  font-family:var(--f-sub);font-size:0.8rem;
+  color:var(--tx2);letter-spacing:0.1em;margin-top:2px;
+}
+.sect-type-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:0.62rem;font-family:var(--f-ui);letter-spacing:0.1em;
+  margin-top:8px;
+}
+.sect-desc{
+  font-size:0.72rem;color:var(--tx2);line-height:1.7;
+  margin-top:10px;padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+.sect-bonuses{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;
+}
+.bonus-tag{
+  font-size:0.62rem;font-family:var(--f-ui);
+  padding:3px 8px;border-radius:4px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--tx2);
+}
+.sect-select-check{
+  position:absolute;top:12px;right:12px;
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;font-weight:900;color:black;
+  opacity:0;transition:all 0.3s;transform:scale(0);
+}
+.sect-card.selected .sect-select-check{opacity:1;transform:scale(1);}
 
-  /* ========== GAME SCREEN ========== */
-  #gameScreen {
-    display:flex; flex-direction:column;
-    min-height:100vh;
-  }
+.btn-join-sect{
+  padding:14px 60px;
+  background:linear-gradient(135deg,hsl(42,80%,25%,0.7) 0%,hsl(42,70%,18%,0.8) 100%);
+  border:1px solid var(--gold2);border-radius:12px;
+  color:var(--gold);font-family:var(--f-sub);font-size:1.1rem;
+  letter-spacing:0.2em;cursor:pointer;
+  transition:all 0.35s;
+}
+.btn-join-sect:hover{
+  box-shadow:var(--gold-glow);
+  background:linear-gradient(135deg,hsl(42,80%,32%,0.8) 0%,hsl(42,70%,25%,0.9) 100%);
+  transform:translateY(-2px);
+}
 
-  /* TOP BAR */
-  .topbar {
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 12px 20px;
-    background: linear-gradient(90deg, rgba(0,10,25,0.95) 0%, rgba(0,20,40,0.9) 50%, rgba(0,10,25,0.95) 100%);
-    border-bottom: 1px solid var(--border-jade);
-    backdrop-filter: blur(10px);
-    position:sticky; top:0; z-index:100;
-  }
-  .topbar-left { display:flex; align-items:center; gap:12px; }
-  .avatar {
-    width:44px; height:44px; border-radius:50%;
-    border: 2px solid var(--jade);
-    box-shadow: 0 0 15px rgba(0,229,200,0.4);
-    object-fit:cover; background: var(--bg-mid);
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.5rem;
-  }
-  .player-info h4 {
-    font-family: 'ZCOOL XiaoWei', serif;
-    font-size:0.95rem; color: var(--text-gold);
-  }
-  .realm-badge {
-    font-size:0.7rem; color: var(--text-jade);
-    letter-spacing:0.05em;
-  }
+/* ============================================================
+   SCREEN 4 — MAIN GAME
+   ============================================================ */
+#gameScreen{display:flex;flex-direction:column;min-height:100vh;}
 
-  .topbar-stats { display:flex; gap:16px; align-items:center; }
-  .stat-chip {
-    display:flex; align-items:center; gap:6px;
-    background: rgba(0,20,40,0.8);
-    border: 1px solid var(--border-jade);
-    border-radius:20px; padding:4px 12px;
-    font-size:0.75rem;
-  }
-  .stat-chip .icon { font-size:0.9rem; }
-  .stat-chip .val { color: var(--text-gold); font-weight:600; }
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;
+  padding:10px 16px;gap:12px;
+  background:linear-gradient(90deg,rgba(2,5,14,0.98) 0%,rgba(6,12,25,0.95) 50%,rgba(2,5,14,0.98) 100%);
+  border-bottom:1px solid rgba(0,229,200,0.12);
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(12px);
+}
+.tb-avatar{
+  width:42px;height:42px;border-radius:50%;border:2px solid var(--jade2);
+  box-shadow:0 0 12px hsl(172,80%,45%,0.3);
+  object-fit:cover;background:var(--ink3);
+  flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.tb-player{flex:0 0 auto;}
+.tb-player .pname{
+  font-family:var(--f-sub);font-size:0.95rem;color:var(--tx-gold);
+  white-space:nowrap;
+}
+.tb-player .prealm{font-size:0.65rem;color:var(--jade);letter-spacing:0.05em;}
+.tb-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.chip{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,15,35,0.7);
+  border:1px solid rgba(0,229,200,0.15);
+  border-radius:20px;padding:4px 10px;
+  font-size:0.72rem;white-space:nowrap;
+}
+.chip .cval{color:var(--tx-gold);font-weight:600;font-family:var(--f-ui);}
+.chip.hp-chip .cval{color:#ff6b80;}
+.chip.mp-chip .cval{color:#60a0ff;}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.sect-emblem{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:20px;
+  font-size:0.72rem;font-family:var(--f-ui);
+}
+.btn-sm{
+  padding:6px 14px;border-radius:8px;cursor:pointer;
+  font-size:0.72rem;font-family:var(--f-ui);
+  border:1px solid;transition:all 0.2s;letter-spacing:0.05em;
+}
+.btn-logout{
+  background:rgba(224,32,80,0.08);border-color:rgba(224,32,80,0.25);
+  color:var(--crim);
+}
+.btn-logout:hover{background:rgba(224,32,80,0.18);}
 
-  .btn-logout {
-    background: rgba(224,32,96,0.1); border: 1px solid rgba(224,32,96,0.3);
-    color: var(--crimson); border-radius:8px; padding:6px 14px;
-    cursor:pointer; font-size:0.75rem; transition: all 0.2s;
-    font-family: 'Noto Serif SC', serif;
-  }
-  .btn-logout:hover { background: rgba(224,32,96,0.2); box-shadow: 0 0 10px rgba(224,32,96,0.2); }
+/* MAIN LAYOUT */
+.game-wrap{
+  display:grid;
+  grid-template-columns:270px 1fr 250px;
+  gap:12px;padding:12px;
+  flex:1;align-items:start;
+}
+@media(max-width:1000px){
+  .game-wrap{grid-template-columns:240px 1fr;}
+}
+@media(max-width:700px){
+  .game-wrap{grid-template-columns:1fr;}
+}
 
-  /* MAIN LAYOUT */
-  .game-body {
-    display:grid;
-    grid-template-columns: 280px 1fr 260px;
-    gap:16px; padding:16px;
-    flex:1;
-  }
-  @media(max-width:900px) {
-    .game-body { grid-template-columns: 1fr; }
-    .right-panel { display:none; }
-  }
+/* PANEL BASE */
+.pnl{
+  background:var(--panel);
+  border:var(--b-jade);border-radius:14px;
+  padding:14px;
+  box-shadow:var(--panel-glow);
+  backdrop-filter:blur(10px);
+  position:relative;overflow:hidden;
+}
+.pnl::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,hsl(172,60%,40%,0.3),transparent);
+}
+.pnl-title{
+  font-family:var(--f-sub);font-size:1rem;color:var(--jade);
+  display:flex;align-items:center;gap:8px;
+  padding-bottom:10px;margin-bottom:12px;
+  border-bottom:1px solid rgba(0,229,200,0.1);
+  letter-spacing:0.05em;
+}
+.pnl-title .ico{font-size:1rem;}
 
-  /* PANELS */
-  .panel {
-    background: linear-gradient(160deg, rgba(0,20,45,0.9) 0%, rgba(0,10,28,0.95) 100%);
-    border: 1px solid var(--border-jade);
-    border-radius:12px;
-    padding:16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,229,200,0.05);
-  }
+/* ============================================================
+   LEFT PANEL — CHARACTER
+   ============================================================ */
+.char-avatar-wrap{
+  text-align:center;
+  padding:16px 8px;
+  background:radial-gradient(ellipse 70% 50% at 50% 50%,
+    rgba(0,229,200,0.06) 0%,transparent 70%);
+  border-radius:12px;margin-bottom:12px;
+  border:1px solid rgba(0,229,200,0.08);
+  position:relative;overflow:hidden;
+}
+.char-display-svg{width:120px;height:160px;margin:0 auto;display:block;}
+.char-aura{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:100px;height:100px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,200,0.08) 0%,transparent 70%);
+  animation:auraPulse 3s ease-in-out infinite;
+}
+@keyframes auraPulse{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
+  50%{transform:translate(-50%,-50%) scale(1.6);opacity:0.2;}
+}
+.realm-big{
+  font-family:var(--f-title);font-size:1.8rem;
+  color:var(--jade);text-shadow:var(--jade-glow);
+  position:relative;z-index:1;
+}
+.stage-big{
+  font-family:var(--f-sub);font-size:0.75rem;
+  color:var(--gold);letter-spacing:0.1em;
+  margin-top:2px;position:relative;z-index:1;
+}
 
-  .panel-title {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size:1.1rem; color: var(--text-jade);
-    border-bottom: 1px solid var(--border-jade);
-    padding-bottom:8px; margin-bottom:14px;
-    display:flex; align-items:center; gap:8px;
-    letter-spacing:0.1em;
-  }
-  .panel-title .icon { font-size:1rem; }
+/* Stat bars */
+.sbar{margin-bottom:8px;}
+.sbar-hd{
+  display:flex;justify-content:space-between;
+  font-size:0.68rem;color:var(--tx2);margin-bottom:3px;
+}
+.sbar-hd span:last-child{color:var(--tx1);}
+.sbar-bg{
+  height:5px;border-radius:3px;
+  background:rgba(255,255,255,0.04);overflow:hidden;
+}
+.sbar-fill{
+  height:100%;border-radius:3px;
+  transition:width 0.6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.sbar-fill::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;
+  width:8px;filter:blur(4px);border-radius:50%;
+}
+.f-hp{background:linear-gradient(90deg,#6b0020,#e03060);}
+.f-hp::after{background:#ff60a0;}
+.f-mp{background:linear-gradient(90deg,#001560,#2060e0);}
+.f-mp::after{background:#60a0ff;}
+.f-exp{background:linear-gradient(90deg,hsl(172,60%,12%),var(--jade));}
+.f-exp::after{background:var(--jade);}
+.f-body{background:linear-gradient(90deg,#402000,var(--earth));}
+.f-sword{background:linear-gradient(90deg,#001840,var(--ice));}
 
-  /* STAT BARS */
-  .stat-row { margin-bottom:10px; }
-  .stat-label {
-    display:flex; justify-content:space-between;
-    font-size:0.75rem; color: var(--text-dim); margin-bottom:4px;
-  }
-  .stat-label span:last-child { color: var(--text-main); font-weight:500; }
-  .bar-bg {
-    height:6px; border-radius:3px;
-    background: rgba(255,255,255,0.05);
-    overflow:hidden; position:relative;
-  }
-  .bar-fill {
-    height:100%; border-radius:3px;
-    transition: width 0.5s ease;
-    position:relative;
-  }
-  .bar-fill::after {
-    content:''; position:absolute; right:0; top:0; bottom:0;
-    width:6px; border-radius:50%;
-    filter: blur(4px);
-  }
-  .bar-hp { background: linear-gradient(90deg, #8b0000, #e02060); }
-  .bar-hp::after { background: #ff6090; }
-  .bar-mp { background: linear-gradient(90deg, #001080, #0050e0); }
-  .bar-mp::after { background: #60a0ff; }
-  .bar-exp { background: linear-gradient(90deg, #004040, #00e5c8); }
-  .bar-exp::after { background: #00ffe8; }
+/* Attributes */
+.attrs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.attr{
+  background:rgba(0,15,35,0.5);border:1px solid rgba(0,229,200,0.08);
+  border-radius:8px;padding:7px 4px;text-align:center;
+}
+.attr .av{font-size:1rem;color:var(--gold);font-weight:700;font-family:var(--f-ui);}
+.attr .an{font-size:0.58rem;color:var(--tx3);margin-top:1px;}
 
-  /* CULTIVATION ATTRIBUTES */
-  .attrs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
-  .attr-item {
-    background: rgba(0,30,60,0.5); border: 1px solid rgba(0,229,200,0.1);
-    border-radius:8px; padding:8px; text-align:center;
-  }
-  .attr-val { font-size:1.1rem; color: var(--text-gold); font-weight:700; }
-  .attr-name { font-size:0.65rem; color: var(--text-dim); margin-top:2px; }
+/* ============================================================
+   CENTER PANEL — TABS
+   ============================================================ */
+.tabs-nav{
+  display:flex;gap:3px;margin-bottom:14px;
+  background:rgba(0,8,20,0.5);border-radius:10px;padding:4px;
+}
+.tnav{
+  flex:1;padding:8px 2px;text-align:center;
+  font-family:var(--f-ui);font-size:0.68rem;
+  color:var(--tx3);cursor:pointer;border-radius:7px;
+  transition:all 0.25s;letter-spacing:0.03em;
+  border:1px solid transparent;
+  white-space:nowrap;
+}
+.tnav:hover{color:var(--jade);}
+.tnav.on{
+  color:var(--jade);
+  background:rgba(0,229,200,0.08);
+  border-color:rgba(0,229,200,0.2);
+  text-shadow:0 0 10px rgba(0,229,200,0.4);
+}
+.tcontent{display:none;}
+.tcontent.on{display:block;}
 
-  /* REALM DISPLAY */
-  .realm-display {
-    text-align:center; padding:16px 8px;
-    background: radial-gradient(ellipse at center, rgba(0,229,200,0.08) 0%, transparent 70%);
-    border-radius:10px; margin-bottom:12px;
-    border: 1px solid rgba(0,229,200,0.15);
-    position:relative; overflow:hidden;
-  }
-  .realm-display::before {
-    content:''; position:absolute;
-    top:50%; left:50%; transform:translate(-50%,-50%);
-    width:100px; height:100px; border-radius:50%;
-    background: radial-gradient(circle, rgba(0,229,200,0.1) 0%, transparent 70%);
-    animation: pulse 3s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
-    50%{transform:translate(-50%,-50%) scale(1.5);opacity:0.2;}
-  }
-  .realm-cn { font-family:'Ma Shan Zheng',cursive; font-size:2rem; color:var(--text-jade); position:relative; z-index:1; }
-  .realm-stage { font-size:0.8rem; color:var(--text-gold); letter-spacing:0.1em; margin-top:4px; position:relative; z-index:1; }
+/* ============================================================
+   TAB: CULTIVATE
+   ============================================================ */
+.cult-hub{
+  background:linear-gradient(160deg,rgba(0,40,60,0.3) 0%,rgba(0,20,40,0.2) 100%);
+  border:1px solid rgba(0,229,200,0.12);border-radius:12px;
+  padding:20px;text-align:center;margin-bottom:14px;
+  position:relative;overflow:hidden;
+  cursor:pointer;
+}
+.cult-hub::before{
+  content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,200,0.05) 0%,transparent 70%);
+  animation:auraPulse 3s ease-in-out infinite;pointer-events:none;
+}
+.cult-orb{
+  font-size:4.5rem;display:block;
+  animation:orbSpin 30s linear infinite;
+  filter:drop-shadow(0 0 15px rgba(0,229,200,0.4));
+  position:relative;z-index:1;
+}
+@keyframes orbSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}
+}
+.cult-orb.active{animation-duration:4s;filter:drop-shadow(0 0 25px rgba(0,229,200,0.8));}
+.cult-name{
+  font-family:var(--f-sub);font-size:1.2rem;color:var(--jade);
+  position:relative;z-index:1;margin-top:8px;
+}
+.cult-sub{font-size:0.75rem;color:var(--tx3);margin-top:4px;position:relative;z-index:1;}
 
-  /* ========== TABS ========== */
-  .tabs {
-    display:flex; gap:4px; margin-bottom:16px;
-    background: rgba(0,10,25,0.5); border-radius:10px; padding:4px;
-  }
-  .tab {
-    flex:1; padding:8px 4px; text-align:center;
-    font-size:0.75rem; font-family:'ZCOOL XiaoWei',serif;
-    color: var(--text-dim); cursor:pointer; border-radius:7px;
-    transition: all 0.2s; letter-spacing:0.05em;
-    border:1px solid transparent;
-  }
-  .tab:hover { color: var(--text-jade); }
-  .tab.active {
-    color: var(--text-jade);
-    background: rgba(0,229,200,0.1);
-    border-color: var(--border-jade);
-    text-shadow: 0 0 10px rgba(0,229,200,0.5);
-  }
+.btn-cult{
+  width:100%;padding:13px;margin-top:14px;
+  background:linear-gradient(135deg,rgba(0,229,200,0.1) 0%,rgba(0,120,180,0.1) 100%);
+  border:1px solid rgba(0,229,200,0.3);border-radius:10px;
+  color:var(--jade);font-family:var(--f-sub);font-size:1rem;
+  letter-spacing:0.1em;cursor:pointer;
+  transition:all 0.3s;position:relative;z-index:1;
+}
+.btn-cult:hover,.btn-cult.on{
+  background:rgba(0,229,200,0.18);
+  box-shadow:var(--jade-glow);
+}
+.btn-cult.on{animation:breathe 2s ease-in-out infinite;}
+@keyframes breathe{
+  0%,100%{box-shadow:0 0 10px rgba(0,229,200,0.3);}
+  50%{box-shadow:0 0 35px rgba(0,229,200,0.7),0 0 70px rgba(0,229,200,0.2);}
+}
+.cult-status{font-size:0.72rem;color:var(--tx2);min-height:18px;margin-top:6px;text-align:center;}
 
-  .tab-content { display:none; }
-  .tab-content.active { display:block; }
+/* Cultivation paths grid */
+.cult-paths{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.path-card{
+  border-radius:10px;padding:12px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(0,10,25,0.4);
+  cursor:pointer;transition:all 0.25s;
+}
+.path-card:hover{transform:translateY(-2px);}
+.path-card h4{
+  font-family:var(--f-ui);font-size:0.8rem;
+  display:flex;align-items:center;gap:6px;margin-bottom:6px;
+}
+.path-card p{font-size:0.65rem;color:var(--tx3);line-height:1.5;}
+.path-badge{
+  display:inline-block;font-size:0.6rem;font-family:var(--f-ui);
+  padding:2px 7px;border-radius:3px;margin-top:6px;
+}
 
-  /* ========== CULTIVATION TAB ========== */
-  .cult-area {
-    text-align:center; padding:20px;
-    background: radial-gradient(ellipse at center, rgba(0,80,100,0.15) 0%, transparent 70%);
-    border-radius:12px; margin-bottom:16px;
-    border: 1px solid rgba(0,229,200,0.1);
-    cursor:pointer; transition: all 0.3s;
-    position:relative; overflow:hidden;
-  }
-  .cult-area:hover { border-color: var(--border-jade); box-shadow: 0 0 30px rgba(0,229,200,0.1); }
-  .cult-icon { font-size:4rem; margin-bottom:12px; display:block; animation: rotate 20s linear infinite; }
-  .cult-btn {
-    width:100%; padding:12px;
-    background: linear-gradient(135deg, rgba(0,229,200,0.15) 0%, rgba(0,100,180,0.15) 100%);
-    border: 1px solid var(--border-jade); border-radius:8px;
-    color: var(--text-jade); cursor:pointer;
-    font-family:'ZCOOL XiaoWei',serif; font-size:1rem;
-    transition: all 0.3s; letter-spacing:0.1em;
-    margin-top:10px;
-  }
-  .cult-btn:hover { background: rgba(0,229,200,0.25); box-shadow: 0 0 20px rgba(0,229,200,0.2); }
-  .cult-btn.active { 
-    animation: breathe 2s ease-in-out infinite;
-    background: rgba(0,229,200,0.2);
-  }
-  @keyframes breathe {
-    0%,100%{ box-shadow: 0 0 10px rgba(0,229,200,0.3); }
-    50%{ box-shadow: 0 0 30px rgba(0,229,200,0.6), 0 0 60px rgba(0,229,200,0.2); }
-  }
-  @keyframes rotate {
-    from{transform:rotate(0deg);} to{transform:rotate(360deg);}
-  }
-  .cult-status { font-size:0.8rem; color: var(--text-dim); margin-top:8px; min-height:20px; }
+/* ============================================================
+   TAB: EXPLORE / BATTLE
+   ============================================================ */
+.battle-log{
+  background:rgba(0,4,12,0.8);border:1px solid rgba(0,229,200,0.1);
+  border-radius:8px;padding:10px;height:150px;overflow-y:auto;
+  font-size:0.72rem;line-height:1.8;margin-bottom:12px;
+  display:none;
+}
+.battle-log.vis{display:block;}
+.ll{padding:1px 0;border-bottom:1px solid rgba(255,255,255,0.02);}
+.ll-dmg{color:#ff7090;}.ll-heal{color:#60ffb0;}
+.ll-exp{color:var(--jade);}.ll-gold{color:var(--gold);}
+.ll-sys{color:var(--tx3);font-style:italic;}
+.ll-crit{color:#ffd700;font-weight:600;}
 
-  .sect-info {
-    background: rgba(0,20,40,0.5); border: 1px solid var(--border-gold);
-    border-radius:8px; padding:12px; margin-top:12px;
-  }
-  .sect-info h4 { font-family:'ZCOOL XiaoWei',serif; color:var(--text-gold); font-size:0.9rem; margin-bottom:6px; }
-  .sect-info p { font-size:0.75rem; color:var(--text-dim); line-height:1.6; }
+.zone-list{display:flex;flex-direction:column;gap:8px;}
+.zone-card{
+  border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all 0.25s;
+  position:relative;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.zone-card::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.25s;
+}
+.zone-card:hover::before{opacity:1;}
+.zone-card:hover{transform:translateX(4px);}
+.zone-ico{font-size:2rem;flex-shrink:0;position:relative;z-index:1;}
+.zone-info{flex:1;position:relative;z-index:1;}
+.zone-info h4{font-family:var(--f-ui);font-size:0.88rem;}
+.zone-info p{font-size:0.65rem;color:var(--tx3);margin-top:2px;}
+.zone-reward{text-align:right;flex-shrink:0;position:relative;z-index:1;}
+.zone-reward .r-exp{font-size:0.65rem;color:var(--jade);}
+.zone-reward .r-gold{font-size:0.65rem;color:var(--gold);}
+.lock-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,0.6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;color:var(--tx3);font-family:var(--f-ui);
+  border-radius:10px;
+}
 
-  /* ========== EXPLORE TAB ========== */
-  .monster-card {
-    background: linear-gradient(135deg, rgba(80,0,20,0.3) 0%, rgba(30,0,10,0.5) 100%);
-    border: 1px solid rgba(224,32,96,0.2);
-    border-radius:10px; padding:14px; margin-bottom:10px;
-    display:flex; align-items:center; gap:12px;
-    cursor:pointer; transition: all 0.2s;
-    position:relative; overflow:hidden;
-  }
-  .monster-card::before {
-    content:''; position:absolute; inset:0;
-    background: linear-gradient(135deg, rgba(224,32,96,0.05) 0%, transparent 100%);
-    opacity:0; transition:opacity 0.2s;
-  }
-  .monster-card:hover::before { opacity:1; }
-  .monster-card:hover { border-color: rgba(224,32,96,0.4); transform:translateX(4px); }
-  .monster-icon { font-size:2.2rem; flex-shrink:0; }
-  .monster-info h4 { font-size:0.9rem; color: #ff8080; font-family:'ZCOOL XiaoWei',serif; }
-  .monster-info p { font-size:0.7rem; color: var(--text-dim); margin-top:2px; }
-  .monster-reward { margin-left:auto; text-align:right; flex-shrink:0; }
-  .monster-reward .exp { font-size:0.7rem; color: var(--text-jade); }
-  .monster-reward .gold { font-size:0.7rem; color: var(--text-gold); }
+/* ============================================================
+   TAB: CULTIVATION PATHS (多修)
+   ============================================================ */
+.paths-wrap{display:flex;flex-direction:column;gap:14px;}
+.path-section{
+  border-radius:12px;padding:14px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(0,10,25,0.4);
+}
+.path-section-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.path-section-header .ps-icon{font-size:1.8rem;}
+.path-section-header h3{
+  font-family:var(--f-sub);font-size:1rem;
+}
+.path-section-header p{font-size:0.65rem;color:var(--tx2);margin-top:2px;}
+.path-stages{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.ps-stage{
+  padding:4px 10px;border-radius:6px;
+  font-size:0.65rem;font-family:var(--f-ui);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--tx3);background:rgba(0,10,25,0.4);
+  transition:all 0.2s;
+}
+.ps-stage.done{color:var(--gold);border-color:rgba(255,215,0,0.25);background:rgba(255,215,0,0.05);}
+.ps-stage.current{border-color:var(--jade2);background:rgba(0,229,200,0.08);color:var(--jade);}
+.path-train-btn{
+  padding:9px 20px;border-radius:8px;cursor:pointer;
+  font-family:var(--f-ui);font-size:0.8rem;
+  letter-spacing:0.05em;transition:all 0.25s;border:1px solid;
+}
 
-  /* BATTLE LOG */
-  #battleLog {
-    background: rgba(0,5,15,0.8); border: 1px solid var(--border-jade);
-    border-radius:8px; padding:10px; height:160px; overflow-y:auto;
-    font-size:0.75rem; line-height:1.7;
-    display:none;
-  }
-  #battleLog.visible { display:block; }
-  .log-line { padding:2px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-  .log-dmg { color: #ff6060; }
-  .log-heal { color: #60ff90; }
-  .log-exp { color: var(--text-jade); }
-  .log-gold { color: var(--text-gold); }
-  .log-sys { color: var(--text-dim); font-style:italic; }
+/* ============================================================
+   TAB: SECT MISSIONS
+   ============================================================ */
+.mission-list{display:flex;flex-direction:column;gap:8px;}
+.mission-card{
+  border-radius:10px;padding:12px;
+  border:1px solid rgba(255,255,255,0.05);
+  background:rgba(0,10,25,0.4);
+  display:flex;align-items:flex-start;gap:10px;
+}
+.mission-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
+.mission-body{flex:1;}
+.mission-body h4{font-family:var(--f-ui);font-size:0.82rem;}
+.mission-body p{font-size:0.65rem;color:var(--tx3);margin-top:3px;line-height:1.5;}
+.mission-body .prog{
+  font-size:0.65rem;color:var(--jade);margin-top:4px;
+  display:flex;align-items:center;gap:6px;
+}
+.prog-bar-sm{
+  height:4px;flex:1;border-radius:2px;background:rgba(255,255,255,0.06);overflow:hidden;
+}
+.prog-bar-sm .fill{height:100%;border-radius:2px;background:var(--jade);}
+.mission-reward{text-align:right;font-size:0.65rem;flex-shrink:0;}
+.mission-reward .mr-exp{color:var(--jade);}
+.mission-reward .mr-gold{color:var(--gold);}
+.btn-mission{
+  padding:5px 12px;border-radius:6px;cursor:pointer;
+  font-size:0.68rem;font-family:var(--f-ui);
+  margin-top:6px;transition:all 0.2s;
+}
 
-  /* ========== SKILLS TAB ========== */
-  .skill-card {
-    background: rgba(0,20,50,0.5); border: 1px solid rgba(0,100,200,0.2);
-    border-radius:10px; padding:12px; margin-bottom:10px;
-    display:flex; align-items:flex-start; gap:10px;
-  }
-  .skill-icon {
-    width:44px; height:44px; border-radius:8px;
-    background: linear-gradient(135deg, rgba(0,100,200,0.3), rgba(0,50,120,0.5));
-    border: 1px solid rgba(0,150,255,0.3);
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.4rem; flex-shrink:0;
-  }
-  .skill-info { flex:1; }
-  .skill-info h4 { font-family:'ZCOOL XiaoWei',serif; font-size:0.9rem; color:#80c0ff; }
-  .skill-info p { font-size:0.68rem; color: var(--text-dim); margin-top:3px; line-height:1.5; }
-  .skill-level { font-size:0.7rem; color: var(--text-gold); margin-top:4px; }
-  .btn-upgrade {
-    padding:6px 14px; border-radius:6px; cursor:pointer;
-    background: rgba(0,100,200,0.2); border: 1px solid rgba(0,150,255,0.3);
-    color: #80c0ff; font-size:0.7rem;
-    transition: all 0.2s; flex-shrink:0; align-self:center;
-    font-family:'Noto Serif SC',serif;
-  }
-  .btn-upgrade:hover { background: rgba(0,100,200,0.4); box-shadow: 0 0 10px rgba(0,150,255,0.2); }
-  .btn-upgrade:disabled { opacity:0.4; cursor:not-allowed; }
+/* ============================================================
+   TAB: ARENA
+   ============================================================ */
+.arena-header{
+  text-align:center;padding:20px;margin-bottom:14px;
+  background:linear-gradient(160deg,rgba(60,10,20,0.3) 0%,rgba(30,5,10,0.4) 100%);
+  border:1px solid rgba(224,32,80,0.15);border-radius:12px;
+  position:relative;overflow:hidden;
+}
+.arena-header h3{
+  font-family:var(--f-title);font-size:2rem;color:var(--crim);
+  text-shadow:var(--crim-glow);letter-spacing:0.1em;
+}
+.arena-header p{font-size:0.75rem;color:var(--tx3);margin-top:6px;}
+.arena-rank-badge{
+  display:inline-block;padding:4px 16px;border-radius:20px;
+  background:rgba(224,32,80,0.1);border:1px solid rgba(224,32,80,0.3);
+  color:var(--crim);font-size:0.75rem;font-family:var(--f-sub);
+  margin-top:10px;letter-spacing:0.1em;
+}
 
-  /* ========== SHOP TAB ========== */
-  .shop-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .shop-item {
-    background: rgba(0,20,40,0.5); border: 1px solid var(--border-gold);
-    border-radius:10px; padding:10px; text-align:center;
-    cursor:pointer; transition: all 0.2s;
-  }
-  .shop-item:hover { background: rgba(255,215,0,0.08); box-shadow: 0 0 15px rgba(255,215,0,0.1); }
-  .shop-item .item-icon { font-size:2rem; margin-bottom:6px; display:block; }
-  .shop-item .item-name { font-family:'ZCOOL XiaoWei',serif; font-size:0.82rem; color: var(--text-gold); }
-  .shop-item .item-desc { font-size:0.65rem; color: var(--text-dim); margin:3px 0; line-height:1.4; }
-  .shop-item .item-price { font-size:0.75rem; color: var(--text-gold); }
-  .shop-item .item-price::before { content:'💰 '; }
+.arena-skill-pick h4{
+  font-family:var(--f-ui);font-size:0.82rem;color:var(--tx2);
+  letter-spacing:0.1em;margin-bottom:10px;
+}
+.skill-pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.sp-card{
+  border-radius:10px;padding:10px 6px;text-align:center;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(0,10,25,0.4);cursor:pointer;
+  transition:all 0.25s;position:relative;
+}
+.sp-card:hover{border-color:rgba(0,229,200,0.3);}
+.sp-card.picked{
+  border-color:var(--jade);background:rgba(0,229,200,0.08);
+  box-shadow:0 0 15px rgba(0,229,200,0.1);
+}
+.sp-card .sp-ico{font-size:1.6rem;display:block;}
+.sp-card .sp-name{font-size:0.62rem;font-family:var(--f-ui);color:var(--tx2);margin-top:4px;display:block;}
+.sp-card .sp-dmg{font-size:0.6rem;color:var(--jade);margin-top:2px;}
+.pick-count{
+  font-size:0.68rem;color:var(--tx3);margin:6px 0;
+}
+.pick-count span{color:var(--jade);}
+.btn-fight-arena{
+  width:100%;padding:13px;margin-top:10px;
+  background:linear-gradient(135deg,rgba(224,32,80,0.15) 0%,rgba(120,0,40,0.2) 100%);
+  border:1px solid rgba(224,32,80,0.35);border-radius:10px;
+  color:var(--crim);font-family:var(--f-sub);font-size:1rem;
+  letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;
+}
+.btn-fight-arena:hover{
+  background:rgba(224,32,80,0.25);
+  box-shadow:var(--crim-glow);
+}
+.arena-log{
+  background:rgba(0,4,12,0.8);border:1px solid rgba(224,32,80,0.15);
+  border-radius:8px;padding:10px;height:160px;overflow-y:auto;
+  font-size:0.72rem;line-height:1.8;margin-top:10px;
+  display:none;
+}
+.arena-log.vis{display:block;}
 
-  /* ========== RIGHT PANEL ========== */
-  .leaderboard-entry {
-    display:flex; align-items:center; gap:8px;
-    padding:8px; border-radius:8px;
-    background: rgba(0,15,35,0.5); margin-bottom:6px;
-    border: 1px solid rgba(255,215,0,0.05);
-  }
-  .rank-num { 
-    width:22px; height:22px; border-radius:50%;
-    background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2);
-    display:flex; align-items:center; justify-content:center;
-    font-size:0.7rem; color:var(--text-gold); flex-shrink:0;
-  }
-  .rank-info { flex:1; min-width:0; }
-  .rank-info .name { font-size:0.8rem; color: var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .rank-info .realm { font-size:0.65rem; color: var(--text-jade); }
+/* ============================================================
+   TAB: SHOP
+   ============================================================ */
+.shop-tabs{display:flex;gap:6px;margin-bottom:12px;}
+.stab{
+  flex:1;padding:7px;text-align:center;border-radius:7px;
+  font-size:0.68rem;font-family:var(--f-ui);
+  color:var(--tx3);cursor:pointer;transition:all 0.2s;
+  border:1px solid transparent;background:rgba(0,10,25,0.3);
+}
+.stab:hover{color:var(--gold);}
+.stab.on{color:var(--gold);border-color:rgba(255,215,0,0.2);background:rgba(255,215,0,0.05);}
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.sitem{
+  border-radius:10px;padding:12px;text-align:center;
+  border:1px solid rgba(255,215,0,0.12);
+  background:rgba(0,10,25,0.4);cursor:pointer;
+  transition:all 0.25s;
+}
+.sitem:hover{
+  background:rgba(255,215,0,0.06);
+  box-shadow:0 0 15px rgba(255,215,0,0.07);
+  transform:translateY(-2px);
+}
+.sitem .si-ico{font-size:1.8rem;display:block;margin-bottom:6px;}
+.sitem .si-name{font-family:var(--f-ui);font-size:0.78rem;color:var(--gold);}
+.sitem .si-desc{font-size:0.62rem;color:var(--tx3);margin:4px 0;line-height:1.4;}
+.sitem .si-price{font-size:0.72rem;color:var(--gold);}
 
-  /* NEWS / EVENTS */
-  .event-item {
-    padding:8px; border-left: 2px solid var(--jade);
-    margin-bottom:8px; background: rgba(0,229,200,0.03);
-    border-radius:0 6px 6px 0;
-  }
-  .event-item .time { font-size:0.65rem; color: var(--text-dim); }
-  .event-item .msg { font-size:0.75rem; color: var(--text-main); margin-top:2px; line-height:1.4; }
+/* ============================================================
+   RIGHT PANEL
+   ============================================================ */
+.leaderboard-list,.event-list{display:flex;flex-direction:column;gap:6px;}
+.lb-entry{
+  display:flex;align-items:center;gap:8px;padding:8px;
+  border-radius:8px;background:rgba(0,8,20,0.4);
+  border:1px solid rgba(255,215,0,0.04);
+}
+.lb-rank{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.65rem;color:black;font-weight:900;
+  background:rgba(255,215,0,0.7);
+}
+.lb-rank.r1{background:var(--gold);}
+.lb-rank.r2{background:#c0c0c0;}
+.lb-rank.r3{background:#cd7f32;}
+.lb-rank.rother{background:rgba(255,255,255,0.15);color:var(--tx3);}
+.lb-info{flex:1;min-width:0;}
+.lb-info .lbname{font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-info .lbrealm{font-size:0.62rem;color:var(--jade);}
+.lb-pts{font-size:0.7rem;color:var(--gold);flex-shrink:0;font-family:var(--f-ui);}
 
-  /* ========== NOTIFICATION ========== */
-  #notification {
-    position:fixed; top:80px; left:50%; transform:translateX(-50%);
-    background: linear-gradient(135deg, rgba(0,40,80,0.95), rgba(0,20,50,0.98));
-    border: 1px solid var(--border-jade);
-    border-radius:10px; padding:10px 20px;
-    z-index:1000; transition: all 0.4s ease;
-    box-shadow: 0 0 30px rgba(0,229,200,0.2);
-    font-size:0.85rem; color: var(--text-jade);
-    opacity:0; pointer-events:none;
-    white-space:nowrap;
-    backdrop-filter:blur(10px);
-  }
-  #notification.show { opacity:1; }
+.ev-item{
+  padding:8px;border-left:2px solid;margin-bottom:4px;
+  border-radius:0 6px 6px 0;
+  background:rgba(0,229,200,0.02);
+}
+.ev-item .ev-time{font-size:0.6rem;color:var(--tx3);}
+.ev-item .ev-msg{font-size:0.72rem;color:var(--tx1);margin-top:2px;line-height:1.4;}
 
-  /* BREAKTHROUGH ANIMATION */
-  #breakthroughOverlay {
-    position:fixed; inset:0; z-index:200;
-    background: rgba(0,0,0,0.8);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none;
-    transition: opacity 0.5s;
-  }
-  #breakthroughOverlay.show { opacity:1; pointer-events:all; }
-  .bt-text {
-    font-family:'Ma Shan Zheng',cursive; font-size:4rem;
-    color: var(--text-gold);
-    text-shadow: 0 0 40px rgba(255,215,0,0.8), 0 0 80px rgba(255,215,0,0.4);
-    animation: btPulse 0.5s ease-in-out infinite alternate;
-    letter-spacing:0.2em;
-  }
-  @keyframes btPulse { 0%{transform:scale(1);} 100%{transform:scale(1.1);} }
-  .bt-sub { font-size:1.5rem; color: var(--text-jade); margin-top:1rem; letter-spacing:0.1em; }
-  .btn-close-bt {
-    margin-top:2rem; padding:12px 40px;
-    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(200,150,0,0.2));
-    border: 1px solid var(--gold); border-radius:8px;
-    color: var(--gold); cursor:pointer; font-size:1rem;
-    font-family:'ZCOOL XiaoWei',serif; letter-spacing:0.1em;
-    transition: all 0.3s;
-  }
-  .btn-close-bt:hover { background: rgba(255,215,0,0.3); box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+/* ============================================================
+   OVERLAYS
+   ============================================================ */
+#notif{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,rgba(0,30,60,0.97),rgba(0,15,40,0.99));
+  border:1px solid var(--jade2);border-radius:10px;
+  padding:10px 22px;z-index:1000;
+  box-shadow:var(--jade-glow);
+  font-size:0.85rem;color:var(--jade);
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s;white-space:nowrap;
+  backdrop-filter:blur(10px);
+}
+#notif.vis{opacity:1;}
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width:4px; }
-  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-  ::-webkit-scrollbar-thumb { background: var(--border-jade); border-radius:2px; }
+#btOverlay{
+  position:fixed;inset:0;z-index:200;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.9) 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.5s;
+}
+#btOverlay.vis{opacity:1;pointer-events:all;}
+.bt-rays{
+  position:absolute;inset:0;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,rgba(0,229,200,0.03) 10deg,
+    transparent 20deg,rgba(255,215,0,0.03) 30deg,
+    transparent 40deg);
+  animation:raysSpin 8s linear infinite;pointer-events:none;
+}
+@keyframes raysSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}
+}
+.bt-main{
+  font-family:var(--f-title);font-size:clamp(3rem,8vw,5rem);
+  background:linear-gradient(135deg,var(--gold) 0%,white 50%,var(--jade) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(255,215,0,0.6));
+  animation:btBounce 0.5s ease-in-out infinite alternate;
+  letter-spacing:0.2em;position:relative;z-index:1;
+}
+@keyframes btBounce{
+  0%{transform:scale(1);}100%{transform:scale(1.06);}
+}
+.bt-realm{
+  font-family:var(--f-sub);font-size:1.4rem;color:var(--jade);
+  margin-top:1rem;letter-spacing:0.15em;position:relative;z-index:1;
+  text-shadow:var(--jade-glow);
+}
+.btn-bt-close{
+  margin-top:2.5rem;padding:13px 50px;
+  background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(0,229,200,0.12));
+  border:1px solid var(--gold2);border-radius:10px;
+  color:var(--gold);cursor:pointer;
+  font-family:var(--f-sub);font-size:1rem;letter-spacing:0.15em;
+  transition:all 0.3s;position:relative;z-index:1;
+}
+.btn-bt-close:hover{
+  box-shadow:var(--gold-glow);
+  background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(0,229,200,0.2));
+}
+
+/* Skills tab in center */
+.skill-list{display:flex;flex-direction:column;gap:8px;}
+.sk-card{
+  border-radius:10px;padding:12px;
+  border:1px solid rgba(255,255,255,0.05);
+  background:rgba(0,10,25,0.4);
+  display:flex;align-items:flex-start;gap:10px;
+}
+.sk-ico{
+  width:44px;height:44px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;border:1px solid rgba(255,255,255,0.08);
+}
+.sk-info{flex:1;}
+.sk-info h4{font-family:var(--f-ui);font-size:0.85rem;}
+.sk-info p{font-size:0.65rem;color:var(--tx3);margin-top:3px;line-height:1.5;}
+.sk-lvl{font-size:0.62rem;color:var(--gold);margin-top:4px;}
+.sk-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.btn-learn{
+  padding:5px 12px;border-radius:6px;cursor:pointer;
+  font-size:0.65rem;font-family:var(--f-ui);
+  transition:all 0.2s;border:1px solid;letter-spacing:0.03em;
+}
+.btn-learn-jade{
+  background:rgba(0,229,200,0.08);border-color:rgba(0,229,200,0.25);
+  color:var(--jade);
+}
+.btn-learn-jade:hover{background:rgba(0,229,200,0.18);}
+.btn-learn:disabled{opacity:0.35;cursor:not-allowed;}
 </style>
 </head>
 <body>
-
 <!-- BACKGROUND -->
-<div class="bg-gradient"></div>
-<div class="islands" id="islands"></div>
-<div id="particles"></div>
-
-<!-- NOTIFICATIONS -->
-<div id="notification"></div>
-
-<!-- BREAKTHROUGH OVERLAY -->
-<div id="breakthroughOverlay">
-  <div class="bt-text">⚡ ĐỘT PHÁ ⚡</div>
-  <div class="bt-sub" id="btRealmText"></div>
-  <button class="btn-close-bt" onclick="closeBt()">天道酬勤 · Kiên Trì Đắc Đạo</button>
+<div id="scene">
+  <div class="mist-layer"></div>
+  <canvas class="stars-canvas" id="starsCanvas"></canvas>
+  <div class="aurora"></div>
+  <div class="mountains" id="mountains"></div>
+</div>
+<div id="notif"></div>
+<div id="btOverlay">
+  <div class="bt-rays"></div>
+  <div class="bt-main">⚡ ĐỘT PHÁ ⚡</div>
+  <div class="bt-realm" id="btRealmTxt"></div>
+  <button class="btn-bt-close" onclick="closeBT()">天道有常 · Tiếp Tục Hành Trình</button>
 </div>
 
-<!-- ============== LOGIN SCREEN ============== -->
+<!-- ============ SCREEN 1: LOGIN ============ -->
 <div id="loginScreen" class="screen">
-  <div class="login-title">問道仙界</div>
-  <div class="login-subtitle">VẤN ĐẠO TIÊN GIỚI</div>
-  <div class="login-card">
-    <h3>🌸 Bắt đầu hành trình tu tiên của bạn</h3>
-    <button class="btn-google" onclick="loginGoogle()">
-      <svg class="google-icon" viewBox="0 0 24 24">
+  <div class="title-wrap">
+    <div class="title-main">問道仙途</div>
+    <div class="title-sub">VẤN ĐẠO TIÊN ĐỒ · XIANXIA RPG</div>
+    <div class="brush-line"></div>
+  </div>
+  <div class="login-box">
+    <p class="login-lore">
+      "Thiên địa bất nhân, vạn vật vi sô cẩu.<br>
+      Đạo khả đạo, phi thường đạo."<br>
+      — Một hành trình nghìn dặm bắt đầu từ bước đi đầu tiên.
+    </p>
+    <button class="btn-google" onclick="doLogin()">
+      <svg class="g-ico" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
       </svg>
-      Đăng nhập với Google
+      Bắt Đầu Hành Trình Tu Tiên
     </button>
-    <div class="divider"></div>
-    <p class="lore-text">
-      "Thiên đạo đãi người siêng năng, ngàn dặm tu tiên thủy chung vẫn một lòng."<br>
-      Bắt đầu hành trình từ Luyện Khí đến Chân Tiên, vượt qua vô số khổ nạn...
-    </p>
   </div>
 </div>
 
-<!-- ============== GAME SCREEN ============== -->
-<div id="gameScreen" class="screen hidden">
+<!-- ============ SCREEN 2: CHARACTER ============ -->
+<div id="charScreen" class="screen hidden">
+  <div class="char-header">
+    <h2>塑造命途</h2>
+    <p>CHỌN NHÂN VẬT · XÁC ĐỊNH THIÊN PHÚ</p>
+    <div class="brush-line"></div>
+  </div>
+  <div class="char-create-wrap">
+    <!-- Gender -->
+    <div>
+      <div class="gender-section">
+        <h3>⚧ CHỌN TÍNH BIỆT</h3>
+        <div class="gender-grid">
+          <div class="gender-card male" id="gcard-male" onclick="pickGender('male')">
+            <div class="gender-bg"></div>
+            <div class="char-svg">
+              <svg width="80" height="140" viewBox="0 0 80 140">
+                <!-- Male cultivator - flowing robes, sword -->
+                <defs>
+                  <linearGradient id="robe-m" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1a3a5c"/>
+                    <stop offset="100%" stop-color="#0a1828"/>
+                  </linearGradient>
+                  <linearGradient id="skin-m" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#c8a080"/>
+                    <stop offset="100%" stop-color="#a07858"/>
+                  </linearGradient>
+                  <filter id="glow-m">
+                    <feGaussianBlur stdDeviation="2" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <!-- Body shadow -->
+                <ellipse cx="40" cy="138" rx="22" ry="4" fill="rgba(0,0,0,0.4)"/>
+                <!-- Robe/body -->
+                <path d="M28 60 Q15 80 12 120 Q18 122 24 120 L26 90 L30 140 L50 140 L54 90 L56 120 Q62 122 68 120 Q65 80 52 60 Z" fill="url(#robe-m)"/>
+                <!-- Belt sash -->
+                <rect x="24" y="75" width="32" height="5" rx="2" fill="#1a4a7a" opacity="0.7"/>
+                <!-- Robe collar -->
+                <path d="M32 60 L40 70 L48 60" fill="none" stroke="#2a5a8a" stroke-width="1.5" opacity="0.8"/>
+                <!-- Robe sleeves -->
+                <path d="M28 62 Q10 70 8 85 Q12 87 14 84 Q18 75 30 68 Z" fill="url(#robe-m)" opacity="0.9"/>
+                <path d="M52 62 Q70 70 72 85 Q68 87 66 84 Q62 75 50 68 Z" fill="url(#robe-m)" opacity="0.9"/>
+                <!-- Neck -->
+                <rect x="36" y="48" width="8" height="14" rx="4" fill="url(#skin-m)"/>
+                <!-- Head -->
+                <ellipse cx="40" cy="38" rx="14" ry="16" fill="url(#skin-m)"/>
+                <!-- Hair - long, tied -->
+                <path d="M26 32 Q20 20 28 10 Q40 4 52 10 Q60 20 54 32" fill="#1a1008" opacity="0.95"/>
+                <path d="M52 30 Q62 40 58 60 Q52 62 50 58 Q54 45 48 35" fill="#1a1008" opacity="0.8"/>
+                <path d="M28 30 Q18 40 22 60 Q28 62 30 58 Q26 45 32 35" fill="#1a1008" opacity="0.8"/>
+                <!-- Hair tie -->
+                <rect x="36" y="8" width="8" height="6" rx="3" fill="#8b0000" opacity="0.8"/>
+                <!-- Face features -->
+                <ellipse cx="34" cy="38" rx="2" ry="2.5" fill="#1a1008"/>
+                <ellipse cx="46" cy="38" rx="2" ry="2.5" fill="#1a1008"/>
+                <path d="M36 46 Q40 49 44 46" fill="none" stroke="#8b4030" stroke-width="1"/>
+                <!-- Eyebrows -->
+                <path d="M31 33 Q35 31 37 33" fill="none" stroke="#1a1008" stroke-width="1.5"/>
+                <path d="M43 33 Q45 31 49 33" fill="none" stroke="#1a1008" stroke-width="1.5"/>
+                <!-- Sword (right side) -->
+                <g filter="url(#glow-m)" transform="rotate(-15,65,90)">
+                  <rect x="63" y="60" width="3" height="55" rx="1" fill="#c0d8f0"/>
+                  <rect x="59" y="112" width="11" height="4" rx="1" fill="#b08030"/>
+                  <rect x="63" y="116" width="3" height="10" rx="1" fill="#8b6020"/>
+                  <ellipse cx="64.5" cy="57" rx="3" ry="4" fill="url(#glow-m)" fill-opacity="0.5"/>
+                </g>
+                <!-- Cultivation glow - subtle aura -->
+                <ellipse cx="40" cy="38" rx="16" ry="18" fill="none" stroke="#00e5c8" stroke-width="0.5" opacity="0.3"/>
+                <!-- Jade pendant -->
+                <ellipse cx="40" cy="76" rx="3" ry="4" fill="#00c8a0" opacity="0.7"/>
+              </svg>
+            </div>
+            <div class="char-label"><h4>劍修</h4><p>NAM · KIẾM TU</p></div>
+            <div class="selected-badge">✓</div>
+          </div>
+          <div class="gender-card female" id="gcard-female" onclick="pickGender('female')">
+            <div class="gender-bg"></div>
+            <div class="char-svg">
+              <svg width="80" height="140" viewBox="0 0 80 140">
+                <defs>
+                  <linearGradient id="robe-f" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#3a1040"/>
+                    <stop offset="100%" stop-color="#1a0820"/>
+                  </linearGradient>
+                  <linearGradient id="sash-f" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#c84080"/>
+                    <stop offset="100%" stop-color="#a02060"/>
+                  </linearGradient>
+                  <linearGradient id="skin-f" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#e8c4a0"/>
+                    <stop offset="100%" stop-color="#c09878"/>
+                  </linearGradient>
+                  <filter id="glow-f">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <radialGradient id="orb-f" cx="50%" cy="50%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#c0e8ff" stop-opacity="0.7"/>
+                    <stop offset="100%" stop-color="#6080c0" stop-opacity="0.3"/>
+                  </radialGradient>
+                </defs>
+                <ellipse cx="40" cy="138" rx="22" ry="4" fill="rgba(0,0,0,0.4)"/>
+                <!-- Wide flowing skirt -->
+                <path d="M30 65 Q15 85 8 130 Q16 133 24 130 L28 95 L30 140 L50 140 L52 95 L56 130 Q64 133 72 130 Q65 85 50 65 Z" fill="url(#robe-f)" opacity="0.95"/>
+                <!-- Skirt layer -->
+                <path d="M28 80 Q15 95 10 130 Q18 132 26 128 Q26 105 32 88 Z" fill="#4a1050" opacity="0.5"/>
+                <path d="M52 80 Q65 95 70 130 Q62 132 54 128 Q54 105 48 88 Z" fill="#4a1050" opacity="0.5"/>
+                <!-- Sash -->
+                <path d="M22 72 Q40 68 58 72 L60 78 Q40 82 20 78 Z" fill="url(#sash-f)" opacity="0.8"/>
+                <!-- Sleeves - wide, flowing -->
+                <path d="M30 65 Q10 68 4 88 Q8 94 12 90 Q18 76 32 70 Z" fill="url(#robe-f)" opacity="0.9"/>
+                <path d="M50 65 Q70 68 76 88 Q72 94 68 90 Q62 76 48 70 Z" fill="url(#robe-f)" opacity="0.9"/>
+                <!-- Sleeve trim -->
+                <path d="M4 88 Q8 92 12 90" fill="none" stroke="#c84080" stroke-width="1.5" opacity="0.7"/>
+                <path d="M76 88 Q72 92 68 90" fill="none" stroke="#c84080" stroke-width="1.5" opacity="0.7"/>
+                <!-- Neck -->
+                <rect x="36" y="50" width="8" height="14" rx="4" fill="url(#skin-f)"/>
+                <!-- Collar -->
+                <path d="M32 62 L40 72 L48 62" fill="none" stroke="#c84080" stroke-width="1.5" opacity="0.7"/>
+                <!-- Head -->
+                <ellipse cx="40" cy="38" rx="13" ry="15" fill="url(#skin-f)"/>
+                <!-- Hair - elaborate updo -->
+                <path d="M27 34 Q22 18 30 8 Q40 2 50 8 Q58 18 53 34" fill="#0a0808"/>
+                <!-- Hair ornament bun -->
+                <ellipse cx="40" cy="6" rx="10" ry="6" fill="#0a0808"/>
+                <path d="M30 6 Q35 0 40 2 Q45 0 50 6" fill="none" stroke="#c84080" stroke-width="1.5" opacity="0.8"/>
+                <!-- Hairpin -->
+                <line x1="32" y1="4" x2="48" y2="4" stroke="#ffd700" stroke-width="1.5" opacity="0.9"/>
+                <ellipse cx="32" cy="4" rx="2" ry="2" fill="#ffd700" opacity="0.9"/>
+                <!-- Side hair -->
+                <path d="M27 34 Q20 44 22 62 Q26 64 28 60 Q26 48 30 38" fill="#0a0808" opacity="0.85"/>
+                <path d="M53 34 Q60 44 58 62 Q54 64 52 60 Q54 48 50 38" fill="#0a0808" opacity="0.85"/>
+                <!-- Face -->
+                <ellipse cx="34" cy="37" rx="1.8" ry="2.2" fill="#1a1008"/>
+                <ellipse cx="46" cy="37" rx="1.8" ry="2.2" fill="#1a1008"/>
+                <!-- Eyelashes -->
+                <path d="M32 35 L31 33 M33.5 34.5 L33 32.5 M35.5 35 L35.5 33" stroke="#1a1008" stroke-width="0.8" opacity="0.8"/>
+                <path d="M44 35 L43 33 M45.5 34.5 L45 32.5 M47.5 35 L47.5 33" stroke="#1a1008" stroke-width="0.8" opacity="0.8"/>
+                <!-- Lips -->
+                <path d="M37 46 Q40 48.5 43 46" fill="#e06070" stroke="#c04050" stroke-width="0.5"/>
+                <!-- Rouge -->
+                <ellipse cx="32" cy="42" rx="4" ry="2.5" fill="#ff8080" opacity="0.2"/>
+                <ellipse cx="48" cy="42" rx="4" ry="2.5" fill="#ff8080" opacity="0.2"/>
+                <!-- Magic orb in left hand -->
+                <g filter="url(#glow-f)" transform="translate(8,88)">
+                  <circle cx="0" cy="0" r="8" fill="url(#orb-f)" opacity="0.85"/>
+                  <circle cx="0" cy="0" r="10" fill="none" stroke="#c0e0ff" stroke-width="0.5" opacity="0.5"/>
+                  <circle cx="-2" cy="-2" r="3" fill="white" opacity="0.6"/>
+                </g>
+                <!-- Cultivation aura -->
+                <ellipse cx="40" cy="38" rx="15" ry="17" fill="none" stroke="#c080c0" stroke-width="0.5" opacity="0.4"/>
+                <!-- Floating petal -->
+                <path d="M60 50 Q65 45 62 52 Q58 58 55 55 Q52 52 60 50Z" fill="#ff80a0" opacity="0.4"/>
+              </svg>
+            </div>
+            <div class="char-label"><h4>法修</h4><p>NỮ · PHÁP TU</p></div>
+            <div class="selected-badge">✓</div>
+          </div>
+        </div>
+      </div>
 
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="avatar" id="userAvatar">🧙</div>
-      <div class="player-info">
-        <h4 id="userName">Đạo Hữu</h4>
-        <div class="realm-badge" id="realmBadge">Luyện Khí · Tầng 1</div>
+      <!-- Aptitude -->
+      <div style="margin-top:16px;">
+        <div class="section-title">✨ THIÊN PHÚ ĐẠO CĂN</div>
+        <div class="apt-grid" id="aptGrid"></div>
       </div>
     </div>
-    <div class="topbar-stats">
-      <div class="stat-chip"><span class="icon">💎</span><span>Linh Thạch:</span><span class="val" id="topGold">0</span></div>
-      <div class="stat-chip"><span class="icon">⚔️</span><span>Lv.</span><span class="val" id="topLevel">1</span></div>
+
+    <!-- Form -->
+    <div class="char-form-section">
+      <div class="input-group">
+        <label>✒ ĐẠO HIỆU (Tên nhân vật)</label>
+        <input type="text" class="inp" id="charNameInp" placeholder="Nhập đạo hiệu của ngươi..." maxlength="20">
+      </div>
+
+      <div>
+        <div class="section-title">☯ TU LUYỆN CHỦ LỘ</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="pathSelectGrid"></div>
+      </div>
+
+      <div style="padding:14px;background:rgba(0,10,25,0.4);border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
+        <div style="font-family:var(--f-ui);font-size:0.75rem;color:var(--tx2);margin-bottom:8px;">📊 THÔNG SỐ BAN ĐẦU</div>
+        <div id="startStatsPreview" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:0.7rem;color:var(--tx2);"></div>
+      </div>
+
+      <button class="btn-start" onclick="createChar()">
+        踏上仙途 · Bước Lên Đường Tu Tiên ➤
+      </button>
     </div>
-    <button class="btn-logout" onclick="logout()">Xuất Thế</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: SECT ============ -->
+<div id="sectScreen" class="screen hidden">
+  <div class="sect-header">
+    <h2>選擇宗門</h2>
+    <p>CHỌN TÔNG MÔN · ĐỊNH ĐOẠT CHI NHÁNH VẬN MỆNH</p>
+    <div class="brush-line"></div>
+  </div>
+  <div class="sect-grid" id="sectGrid"></div>
+  <button class="btn-join-sect" onclick="joinSect()" id="btnJoinSect">⛩ Bái Nhập Tông Môn</button>
+</div>
+
+<!-- ============ SCREEN 4: GAME ============ -->
+<div id="gameScreen" class="screen hidden">
+  <div class="topbar">
+    <div class="tb-avatar" id="tbAvatar">🧙</div>
+    <div class="tb-player">
+      <div class="pname" id="tbName">Đạo Hữu</div>
+      <div class="prealm" id="tbRealm">Luyện Khí · Tầng 1</div>
+    </div>
+    <div class="tb-chips" id="tbChips">
+      <div class="chip hp-chip">❤️ <span class="cval" id="chip-hp">100</span></div>
+      <div class="chip mp-chip">💧 <span class="cval" id="chip-mp">50</span></div>
+      <div class="chip">💎 <span class="cval" id="chip-gold">0</span></div>
+      <div class="chip">⚔️Lv.<span class="cval" id="chip-lv">1</span></div>
+    </div>
+    <div class="tb-right">
+      <div class="sect-emblem" id="tbSectBadge"></div>
+      <button class="btn-sm btn-logout" onclick="doLogout()">出走</button>
+    </div>
   </div>
 
-  <!-- BODY -->
-  <div class="game-body">
-
-    <!-- LEFT: CHARACTER PANEL -->
+  <div class="game-wrap">
+    <!-- LEFT -->
     <div>
-      <div class="panel">
-        <div class="panel-title"><span class="icon">☯️</span>Tu Vi</div>
-        
-        <div class="realm-display">
-          <div class="realm-cn" id="realmCN">煉氣</div>
-          <div class="realm-stage" id="realmStage">LUYỆN KHÍ · TẦNG 1</div>
+      <div class="pnl">
+        <div class="pnl-title"><span class="ico">☯</span>Thân Thế</div>
+        <div class="char-avatar-wrap">
+          <div class="char-aura"></div>
+          <div id="charDisplaySvg" style="position:relative;z-index:1;"></div>
+          <div class="realm-big" id="realmBig">煉氣</div>
+          <div class="stage-big" id="stageBig">LUYỆN KHÍ · TẦNG 1</div>
         </div>
-
-        <div class="stat-row">
-          <div class="stat-label"><span>❤️ Sinh Lực</span><span id="hpText">100/100</span></div>
-          <div class="bar-bg"><div class="bar-fill bar-hp" id="hpBar" style="width:100%"></div></div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-label"><span>💧 Linh Lực</span><span id="mpText">50/50</span></div>
-          <div class="bar-bg"><div class="bar-fill bar-mp" id="mpBar" style="width:100%"></div></div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-label"><span>✨ Kinh Nghiệm</span><span id="expText">0/100</span></div>
-          <div class="bar-bg"><div class="bar-fill bar-exp" id="expBar" style="width:0%"></div></div>
-        </div>
-
-        <div class="attrs">
-          <div class="attr-item"><div class="attr-val" id="atk">10</div><div class="attr-name">⚔ Công Kích</div></div>
-          <div class="attr-item"><div class="attr-val" id="def">5</div><div class="attr-name">🛡 Phòng Thủ</div></div>
-          <div class="attr-item"><div class="attr-val" id="spd">8</div><div class="attr-name">⚡ Tốc Độ</div></div>
-          <div class="attr-item"><div class="attr-val" id="lck">3</div><div class="attr-name">🍀 Vận May</div></div>
+        <div class="sbar"><div class="sbar-hd"><span>❤️ Sinh Lực</span><span id="s-hp">100/100</span></div><div class="sbar-bg"><div class="sbar-fill f-hp" id="b-hp" style="width:100%"></div></div></div>
+        <div class="sbar"><div class="sbar-hd"><span>💧 Linh Lực</span><span id="s-mp">50/50</span></div><div class="sbar-bg"><div class="sbar-fill f-mp" id="b-mp" style="width:100%"></div></div></div>
+        <div class="sbar"><div class="sbar-hd"><span>✨ Kinh Nghiệm</span><span id="s-exp">0/100</span></div><div class="sbar-bg"><div class="sbar-fill f-exp" id="b-exp" style="width:0%"></div></div></div>
+        <div class="sbar"><div class="sbar-hd"><span>💪 Thể Tu</span><span id="s-body">Lv.1</span></div><div class="sbar-bg"><div class="sbar-fill f-body" id="b-body" style="width:10%"></div></div></div>
+        <div class="sbar"><div class="sbar-hd"><span>⚔️ Kiếm Tu</span><span id="s-sword">Lv.1</span></div><div class="sbar-bg"><div class="sbar-fill f-sword" id="b-sword" style="width:10%"></div></div></div>
+        <div class="attrs-grid">
+          <div class="attr"><div class="av" id="a-atk">10</div><div class="an">⚔ Công</div></div>
+          <div class="attr"><div class="av" id="a-def">5</div><div class="an">🛡 Thủ</div></div>
+          <div class="attr"><div class="av" id="a-spd">8</div><div class="an">⚡ Tốc</div></div>
+          <div class="attr"><div class="av" id="a-lck">3</div><div class="an">🍀 Vận</div></div>
+          <div class="attr"><div class="av" id="a-int">10</div><div class="an">🌟 Tuệ</div></div>
+          <div class="attr"><div class="av" id="a-str">10</div><div class="an">💪 Lực</div></div>
         </div>
       </div>
-
-      <div class="panel" style="margin-top:12px;">
-        <div class="panel-title"><span class="icon">🎒</span>Vật Phẩm (<span id="invCount">0</span>)</div>
-        <div id="inventoryList" style="font-size:0.75rem;color:var(--text-dim);text-align:center;padding:10px 0;">Túi đồ trống...</div>
+      <div class="pnl" style="margin-top:10px;">
+        <div class="pnl-title"><span class="ico">🎒</span>Túi Đồ (<span id="invCnt">0</span>)</div>
+        <div id="invList" style="font-size:0.72rem;color:var(--tx3);text-align:center;padding:8px;">Trống...</div>
       </div>
     </div>
 
-    <!-- CENTER: MAIN CONTENT -->
+    <!-- CENTER -->
     <div>
-      <div class="panel">
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab('cultivate')">🧘 Tu Luyện</div>
-          <div class="tab" onclick="switchTab('explore')">⚔️ Phó Bản</div>
-          <div class="tab" onclick="switchTab('skills')">🌟 Công Pháp</div>
-          <div class="tab" onclick="switchTab('shop')">🏪 Cửa Hàng</div>
+      <div class="pnl">
+        <div class="tabs-nav">
+          <div class="tnav on" onclick="swTab('cultivate',this)">🧘<br>Tu Luyện</div>
+          <div class="tnav" onclick="swTab('explore',this)">⚔️<br>Phó Bản</div>
+          <div class="tnav" onclick="swTab('paths',this)">🔥<br>Đa Tu</div>
+          <div class="tnav" onclick="swTab('skills',this)">🌟<br>Công Pháp</div>
+          <div class="tnav" onclick="swTab('sect',this)">⛩<br>Tông Môn</div>
+          <div class="tnav" onclick="swTab('arena',this)">🏆<br>Đấu Trường</div>
+          <div class="tnav" onclick="swTab('shop',this)">🏪<br>Cửa Hàng</div>
         </div>
 
-        <!-- CULTIVATE TAB -->
-        <div class="tab-content active" id="tab-cultivate">
-          <div class="cult-area" id="cultArea">
-            <span class="cult-icon">☯️</span>
-            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:1.1rem;color:var(--text-jade);">Tọa Thiền Tu Luyện</div>
-            <div style="font-size:0.75rem;color:var(--text-dim);margin-top:6px;">Nhập định để hấp thụ linh khí thiên địa</div>
-            <button class="cult-btn" id="cultBtn" onclick="toggleCultivate()">▶ Bắt Đầu Tu Luyện</button>
-            <div class="cult-status" id="cultStatus"></div>
+        <!-- CULTIVATE -->
+        <div class="tcontent on" id="tc-cultivate">
+          <div class="cult-hub">
+            <span class="cult-orb" id="cultOrb">☯️</span>
+            <div class="cult-name">Tọa Thiền Nhập Định</div>
+            <div class="cult-sub" id="cultSubTxt">Hấp thụ linh khí thiên địa · <span id="cultSpeedTxt">+5 EXP/s</span></div>
           </div>
-
-          <div class="sect-info">
-            <h4>📖 Ngũ Hành Tiên Tông</h4>
-            <p>Môn phái tu tiên danh tiếng, nằm giữa núi Thiên Sơn linh khí sung túc. Tu luyện tại đây có thể tăng tốc độ hấp thụ linh khí thiên địa.<br><br>
-            <span style="color:var(--text-jade)">Tâm Pháp: Ngũ Hành Quy Nguyên Quyết</span> — Mỗi chu thiên tăng <span style="color:var(--text-gold)">+5 EXP</span></p>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
-            <div class="sect-info" style="border-color:rgba(0,229,200,0.2)">
-              <h4 style="color:var(--text-jade)">⏱ Thời Gian Tu</h4>
-              <p id="totalCultTime" style="font-size:1rem;color:white;margin-top:4px;">0 phút</p>
+          <button class="btn-cult" id="cultBtn" onclick="toggleCult()">▶ Bắt Đầu Tu Luyện</button>
+          <div class="cult-status" id="cultStatus"></div>
+          <div class="cult-paths">
+            <div class="path-card" style="border-color:rgba(0,229,200,0.15)">
+              <h4 style="color:var(--jade)">🌀 Linh Tu Chính Đạo</h4>
+              <p>Con đường hấp thụ linh khí thiên địa, nâng cao cảnh giới tu vi</p>
+              <span class="path-badge" style="background:rgba(0,229,200,0.08);color:var(--jade);border:1px solid rgba(0,229,200,0.2)">Chủ lộ tu tiên</span>
             </div>
-            <div class="sect-info" style="border-color:rgba(0,229,200,0.2)">
-              <h4 style="color:var(--text-jade)">📈 Tốc Độ</h4>
-              <p id="cultSpeed" style="font-size:1rem;color:white;margin-top:4px;">5 EXP/s</p>
+            <div class="path-card" style="border-color:rgba(255,215,0,0.15)">
+              <h4 style="color:var(--gold)">📊 Thống Kê Tu Luyện</h4>
+              <p>Tổng thời gian: <span id="cultTimeTxt" style="color:white">0p</span><br>Tốc độ hiện tại: <span id="cultSpdTxt2" style="color:var(--jade)">5/s</span></p>
+              <span class="path-badge" style="background:rgba(255,215,0,0.05);color:var(--gold);border:1px solid rgba(255,215,0,0.2)" id="boostBadge">Bình thường</span>
             </div>
           </div>
         </div>
 
-        <!-- EXPLORE TAB -->
-        <div class="tab-content" id="tab-explore">
-          <div id="battleLog"></div>
-          <div style="margin-bottom:10px;font-family:'ZCOOL XiaoWei',serif;font-size:0.85rem;color:var(--text-dim);">Chọn đối thủ để chiến đấu:</div>
-          <div id="monsterList"></div>
+        <!-- EXPLORE -->
+        <div class="tcontent" id="tc-explore">
+          <div class="battle-log" id="battleLog"></div>
+          <div class="zone-list" id="zoneList"></div>
         </div>
 
-        <!-- SKILLS TAB -->
-        <div class="tab-content" id="tab-skills">
-          <div id="skillList"></div>
+        <!-- PATHS -->
+        <div class="tcontent" id="tc-paths">
+          <div class="paths-wrap" id="pathsWrap"></div>
         </div>
 
-        <!-- SHOP TAB -->
-        <div class="tab-content" id="tab-shop">
+        <!-- SKILLS -->
+        <div class="tcontent" id="tc-skills">
+          <div class="skill-list" id="skillList"></div>
+        </div>
+
+        <!-- SECT -->
+        <div class="tcontent" id="tc-sect">
+          <div id="sectMissionPanel"></div>
+        </div>
+
+        <!-- ARENA -->
+        <div class="tcontent" id="tc-arena">
+          <div class="arena-header">
+            <h3>⚔ THIÊN LONG ĐẤU TRƯỜNG</h3>
+            <p>Chọn 3 chiêu thức mạnh nhất để chiến đấu vì vinh quang</p>
+            <div class="arena-rank-badge">Hạng của bạn: <span id="arenaRankTxt">#---</span></div>
+          </div>
+          <div class="arena-skill-pick">
+            <h4>CHỌN 3 CHIÊU: <span id="pickCountTxt">0/3</span></h4>
+            <div class="skill-pick-grid" id="skillPickGrid"></div>
+          </div>
+          <div class="pick-count">Đã chọn <span id="pickedNum">0</span>/3 chiêu thức</div>
+          <button class="btn-fight-arena" onclick="fightArena()" id="btnFightArena" disabled>
+            ⚔ Tham Chiến Đấu Trường
+          </button>
+          <div class="arena-log" id="arenaLog"></div>
+        </div>
+
+        <!-- SHOP -->
+        <div class="tcontent" id="tc-shop">
+          <div class="shop-tabs">
+            <div class="stab on" onclick="swShop('pills',this)">💊 Đan Dược</div>
+            <div class="stab" onclick="swShop('gear',this)">⚔️ Trang Bị</div>
+            <div class="stab" onclick="swShop('misc',this)">✨ Linh Bảo</div>
+          </div>
           <div class="shop-grid" id="shopGrid"></div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: EVENTS & RANK -->
-    <div class="right-panel">
-      <div class="panel">
-        <div class="panel-title"><span class="icon">📰</span>Thế Giới Tu Tiên</div>
-        <div id="worldEvents"></div>
+    <!-- RIGHT -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="pnl">
+        <div class="pnl-title"><span class="ico">🌍</span>Thiên Hạ Động Thái</div>
+        <div class="event-list" id="worldEvList"></div>
       </div>
-      <div class="panel" style="margin-top:12px;">
-        <div class="panel-title"><span class="icon">🏆</span>Bảng Xếp Hạng</div>
-        <div id="leaderboard"></div>
+      <div class="pnl">
+        <div class="pnl-title"><span class="ico">🏆</span>Đấu Trường BXH</div>
+        <div class="leaderboard-list" id="arenaLbList"></div>
       </div>
     </div>
-
   </div>
 </div>
-
-<!-- FIREBASE & GAME LOGIC -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, set, get, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCDQsJ_NrGK5ouRLS7vFr55OBZQ0nKhHSk",
-  authDomain: "vietnam-life-game.firebaseapp.com",
-  databaseURL: "https://vietnam-life-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "vietnam-life-game",
-  storageBucket: "vietnam-life-game.firebasestorage.app",
-  messagingSenderId: "134954120781",
-  appId: "1:134954120781:web:d7f762adb80bfce3140e04",
-  measurementId: "G-39VPPE1F9T"
+const FB = {
+  apiKey:"AIzaSyCDQsJ_NrGK5ouRLS7vFr55OBZQ0nKhHSk",
+  authDomain:"vietnam-life-game.firebaseapp.com",
+  databaseURL:"https://vietnam-life-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"vietnam-life-game",storageBucket:"vietnam-life-game.firebasestorage.app",
+  messagingSenderId:"134954120781",
+  appId:"1:134954120781:web:d7f762adb80bfce3140e04",
+  measurementId:"G-39VPPE1F9T"
+};
+const fbApp=initializeApp(FB);
+const auth=getAuth(fbApp);
+const db=getDatabase(fbApp);
+const gProvider=new GoogleAuthProvider();
+
+/* ======================================================
+   GAME DATA
+   ====================================================== */
+const REALMS=[
+  {cn:"凡人",vn:"Phàm Nhân",st:1,expBase:50},
+  {cn:"煉氣",vn:"Luyện Khí",st:9,expBase:100},
+  {cn:"築基",vn:"Trúc Cơ",st:9,expBase:300},
+  {cn:"金丹",vn:"Kim Đan",st:9,expBase:800},
+  {cn:"元嬰",vn:"Nguyên Anh",st:9,expBase:2000},
+  {cn:"化神",vn:"Hóa Thần",st:9,expBase:5000},
+  {cn:"煉虛",vn:"Luyện Hư",st:9,expBase:12000},
+  {cn:"合體",vn:"Hợp Thể",st:9,expBase:30000},
+  {cn:"大乘",vn:"Đại Thừa",st:9,expBase:80000},
+  {cn:"渡劫",vn:"Độ Kiếp",st:9,expBase:200000},
+  {cn:"真仙",vn:"Chân Tiên",st:9,expBase:500000},
+  {cn:"金仙",vn:"Kim Tiên",st:9,expBase:1200000},
+  {cn:"太乙",vn:"Thái Ất Kim Tiên",st:9,expBase:3000000},
+  {cn:"大羅",vn:"Đại La Kim Tiên",st:9,expBase:8000000},
+  {cn:"準聖",vn:"Chuẩn Thánh",st:3,expBase:20000000},
+  {cn:"聖人",vn:"Thánh Nhân",st:3,expBase:60000000},
+  {cn:"混元",vn:"Hỗn Nguyên Vô Cực",st:1,expBase:200000000}
+];
+
+const BODY_STAGES=["Đồng Thân","Thiết Thân","Ngân Thân","Kim Thân","Ngọc Thân","Thần Thân","Thiên Thân","Địa Bất Hoại","Kim Cương Bất Hoại","Bất Tử Tiên Thể"];
+const SWORD_GRADES=["Kiếm Đồng","Kiếm Học","Kiếm Sĩ","Kiếm Khách","Kiếm Sư","Kiếm Thánh","Kiếm Thần","Kiếm Tổ"];
+const DAN_GRADES=["Luyện Đan Nhập Môn","Sơ Cấp Đan Sư","Trung Cấp Đan Sư","Cao Cấp Đan Sư","Đại Đan Sư","Tiên Đan Sư","Hóa Thần Đan Sư","Thiên Đan Sư"];
+
+const APTITUDES=[
+  {icon:"🔥",name:"Hỏa Linh Căn",bonus:"atk",val:5,color:"#e05030"},
+  {icon:"💧",name:"Thủy Linh Căn",bonus:"int",val:5,color:"#3080e0"},
+  {icon:"🌪️",name:"Phong Linh Căn",bonus:"spd",val:5,color:"#80c040"},
+  {icon:"⚡",name:"Lôi Linh Căn",bonus:"atk",val:8,color:"#c0c000"},
+  {icon:"🌑",name:"Âm Linh Căn",bonus:"lck",val:6,color:"#8040a0"},
+  {icon:"☀️",name:"Dương Linh Căn",bonus:"def",val:6,color:"#e0a020"},
+  {icon:"🗡️",name:"Kiếm Linh Căn",bonus:"atk",val:6,color:"#80c0e0"},
+  {icon:"❄️",name:"Băng Linh Căn",bonus:"def",val:7,color:"#80d0f0"},
+];
+
+const PATH_MAINS=[
+  {id:"spirit",icon:"🌀",name:"Linh Tu",desc:"Hấp thụ linh khí, nâng cao cảnh giới",bonus:"tu vi tốc +20%",color:"var(--jade)"},
+  {id:"body",icon:"💪",name:"Thể Tu",desc:"Rèn luyện thể xác, sức mạnh vô song",bonus:"+30% DEF ATK",color:"var(--earth)"},
+  {id:"sword",icon:"⚔️",name:"Kiếm Tu",desc:"Kiếm đạo chí thượng, nhất kiếm siêu xuất",bonus:"+40% ATK kiếm",color:"var(--ice)"},
+  {id:"pill",icon:"⚗️",name:"Đan Tu",desc:"Luyện đan bào dược, trợ lực tu tiên",bonus:"+50% đan dược hiệu quả",color:"#a0c060"},
+];
+
+const SECTS=[
+  {
+    id:"qingyun",icon:"☁️",name:"青雲宗",vn:"Thanh Vân Tông",
+    type:"正道 · Chính Phái",typeColor:"#4080ff",
+    bg:"linear-gradient(160deg,hsl(220,60%,12%) 0%,hsl(200,50%,8%) 100%)",
+    glowColor:"#4080ff",
+    desc:"Môn phái chính đạo lâu đời, chuyên tu kiếm đạo. Điểm tu luyện cao tại Thiên Sơn Linh Mạch, môn sinh tu luyện tốc độ tăng gấp đôi.",
+    bonuses:["⚔ +25% Kiếm Công","🏃 +15% Tốc Tu","🏆 Uy Tín +30","🗡 Thụ Pháp: Thiên Kiếm Quyết"],
+    missions:["Tiêu diệt 5 con Linh Ưng","Thu thập 3 Thiên Kiếm Thảo","Bảo vệ Linh Mạch khỏi Ma Đạo","Đại tỷ vũ nội bộ môn phái"],
+  },
+  {
+    id:"mohung",icon:"🔴",name:"魔皇宮",vn:"Ma Hoàng Cung",
+    type:"魔道 · Ma Phái",typeColor:"#e03060",
+    bg:"linear-gradient(160deg,hsl(345,60%,10%) 0%,hsl(330,50%,6%) 100%)",
+    glowColor:"#e03060",
+    desc:"Ma đạo đệ nhất cung, lấy sát khí luyện thân. Người tu theo ma đạo sinh trưởng nhanh nhưng tâm ma dễ xâm nhập.",
+    bonuses:["⚡ +35% Công Kích","💀 Hút sinh lực kẻ thù","🔮 -20% Phòng Thủ","☠ Thụ Pháp: Huyết Ma Công"],
+    missions:["Giết 10 Chính Đạo môn sinh","Thu thập Huyết Ma Thảo","Xâm nhập Thanh Vân Tông","Phá hủy Linh Đài Chính Phái"],
+  },
+  {
+    id:"luyenthe",icon:"🗿",name:"煉體聖地",vn:"Luyện Thể Thánh Địa",
+    type:"中立 · Trung Lập",typeColor:"#e08030",
+    bg:"linear-gradient(160deg,hsl(25,60%,10%) 0%,hsl(20,50%,6%) 100%)",
+    glowColor:"#e08030",
+    desc:"Tiên cổ thể tu thánh địa. Dạy cách rèn luyện thể xác đến cực hạn, không sợ kiếm đao, thân thể như kim cương.",
+    bonuses:["🛡 +50% Phòng Thủ","💪 +30% Sức Mạnh","🏔 Miễn kháng 20% sát thương","⚗ Thụ Pháp: Kim Cương Bất Hoại Thể"],
+    missions:["Tu thể đến Kim Thân","Đánh bại Tu La Quỷ","Thu thập Địa Long Cốt","Thử thách Thể Tu Thánh Đài"],
+  },
+  {
+    id:"tiencoge",icon:"🔮",name:"天機閣",vn:"Thiên Cơ Các",
+    type:"中立 · Trung Lập",typeColor:"#8040c0",
+    bg:"linear-gradient(160deg,hsl(270,60%,10%) 0%,hsl(250,50%,6%) 100%)",
+    glowColor:"#8040c0",
+    desc:"Bí ẩn nhất trong ngũ đại tông môn. Chuyên về luyện đan, bói mệnh, phong thủy. Tài nguyên phong phú, giàu có nhất thiên hạ.",
+    bonuses:["💰 +50% Linh Thạch","⚗ +40% Đan Dược Hiệu Quả","🔮 +25% Linh Lực","📜 Thụ Pháp: Thiên Cơ Đạo Pháp"],
+    missions:["Luyện 5 Hồi Linh Đan","Điều tra Thiên Cơ Thạch","Tìm nguyên liệu Hóa Thần Đan","Dự đoán thiên tượng chính xác"],
+  },
+  {
+    id:"youming",icon:"👻",name:"幽冥派",vn:"U Minh Phái",
+    type:"邪道 · Tà Phái",typeColor:"#60a0c0",
+    bg:"linear-gradient(160deg,hsl(200,60%,8%) 0%,hsl(220,50%,5%) 100%)",
+    glowColor:"#60a0c0",
+    desc:"Khai thác âm khí địa phủ, tu luyện bằng âm ma linh lực. Tốc độ tu nhanh về đêm, có thể giao tiếp với âm hồn.",
+    bonuses:["🌙 +60% EXP ban đêm","👻 +30% Tốc Độ","🌑 Ẩn thân ban đêm","💀 Thụ Pháp: U Minh Quỷ Công"],
+    missions:["Thu phục 3 Âm Ma","Đánh giá Địa Phủ Cổng","Thu thập U Minh Thảo","Tranh đoạt Âm Ngọc"],
+  },
+];
+
+const ZONES=[
+  {icon:"🌿",name:"Thảo Nguyên Linh Thú",desc:"Yêu thú cấp thấp · An toàn",mobs:[{n:"Lang Tinh",hp:80,atk:8,exp:20,gold:15},{n:"Linh Trư",hp:120,atk:12,exp:30,gold:25}],minRealm:0,color:"#206020",bg:"rgba(20,50,20,0.3)"},
+  {icon:"🌲",name:"Thâm Lâm Cổ Động",desc:"Yêu thú trung cấp · Nguy hiểm",mobs:[{n:"Cổ Xà",hp:250,atk:22,exp:60,gold:50},{n:"Linh Ưng",hp:180,atk:25,exp:70,gold:55}],minRealm:1,color:"#408040",bg:"rgba(20,60,20,0.3)"},
+  {icon:"🏔️",name:"Thiên Hàn Tuyết Sơn",desc:"Tuyết sơn hàn khí · Rất nguy hiểm",mobs:[{n:"Băng Hổ",hp:500,atk:40,exp:140,gold:110},{n:"Tuyết Lang",hp:420,atk:38,exp:130,gold:100}],minRealm:2,color:"#4080a0",bg:"rgba(20,40,60,0.3)"},
+  {icon:"🌋",name:"Hỏa Diệm Hỏa Sơn",desc:"Hỏa ma luyện địa · Nguy cực",mobs:[{n:"Hỏa Ma",hp:900,atk:65,exp:280,gold:220},{n:"Dung Nham Quỷ",hp:1100,atk:72,exp:320,gold:260}],minRealm:3,color:"#c04020",bg:"rgba(60,20,10,0.3)"},
+  {icon:"🌊",name:"Đông Hải Sâu Vực",desc:"Hải vực ma thú · Cực kỳ nguy hiểm",mobs:[{n:"Hải Long",hp:2000,atk:110,exp:600,gold:500},{n:"Thần Ngư",hp:2500,atk:120,exp:700,gold:600}],minRealm:4,color:"#2050b0",bg:"rgba(10,20,60,0.3)"},
+  {icon:"☁️",name:"Hư Không Tiên Cung",desc:"Cổ tiên tàn tích · Siêu nguy hiểm",mobs:[{n:"Cổ Tiên Quỷ",hp:5000,atk:200,exp:2000,gold:1500},{n:"Thiên Long",hp:8000,atk:280,exp:3000,gold:2500}],minRealm:6,color:"#806080",bg:"rgba(30,20,50,0.3)"},
+  {icon:"🌀",name:"Hỗn Nguyên Cổ Địa",desc:"Khai thiên tàn tích · Chỉ đại năng mới tiến",mobs:[{n:"Hỗn Nguyên Thú",hp:20000,atk:500,exp:10000,gold:8000},{n:"Tạo Hóa Quái",hp:50000,atk:800,exp:25000,gold:20000}],minRealm:10,color:"#c0a040",bg:"rgba(40,30,10,0.3)"},
+];
+
+const SKILLS=[
+  {icon:"⚡",name:"Lôi Đình Nhất Kích",desc:"Triệu sét thiên lôi đánh kẻ thù",dmg:25,mp:20,cd:0,type:"lightning",color:"#c0c000",lvl:1,cost:50},
+  {icon:"🌊",name:"Thủy Long Cuộn Xoáy",desc:"Nước hóa thần long tấn công diện rộng",dmg:30,mp:30,cd:0,type:"water",color:"#2060e0",lvl:1,cost:60},
+  {icon:"🔥",name:"Viêm Long Thiêu Thiên",desc:"Hỏa thiêm thiêu đốt toàn bộ",dmg:35,mp:35,cd:0,type:"fire",color:"#e05020",lvl:1,cost:70},
+  {icon:"❄️",name:"Băng Phong Phong Ấn",desc:"Đóng băng kẻ thù, giảm tốc 50%",dmg:20,mp:25,cd:0,type:"ice",color:"#80d0f0",lvl:1,cost:55},
+  {icon:"🌪️",name:"Phong Thần Tung Hoành",desc:"Tốc độ vượt phong thần, né tránh",dmg:28,mp:28,cd:0,type:"wind",color:"#80c040",lvl:1,cost:65},
+  {icon:"☠️",name:"Ma Đạo Huyết Sát",desc:"Hút máu kẻ thù hồi phục bản thân",dmg:40,mp:40,cd:0,type:"dark",color:"#a02060",lvl:1,cost:100},
+  {icon:"🗡️",name:"Kiếm Khí Thiên Vũ",desc:"Phóng kiếm khí trăm dặm giết người",dmg:45,mp:45,cd:0,type:"sword",color:"#80c0e0",lvl:1,cost:120},
+  {icon:"🌟",name:"Tiên Phật Liên Hoa Ấn",desc:"Thần lực phật pháp vô biên, toàn diện",dmg:50,mp:50,cd:0,type:"holy",color:"#e0c040",lvl:1,cost:150},
+  {icon:"🌑",name:"Âm Ma Dương Thần Quyết",desc:"Âm dương cùng phát, thiên hạ vô địch",dmg:60,mp:60,cd:0,type:"yin",color:"#8040a0",lvl:1,cost:200},
+];
+
+const SHOP_ITEMS={
+  pills:[
+    {icon:"🍵",name:"Hồi Linh Đan",desc:"+200 HP",effect:"hp",val:200,price:60},
+    {icon:"💊",name:"Tụ Linh Đan",desc:"+100 MP",effect:"mp",val:100,price:40},
+    {icon:"⬆️",name:"Tu Vi Đan",desc:"+500 EXP",effect:"exp",val:500,price:150},
+    {icon:"🌟",name:"Đột Phá Đan",desc:"+2000 EXP",effect:"exp",val:2000,price:500},
+    {icon:"💎",name:"Tốc Linh Đan",desc:"+50% EXP 60s",effect:"boost",val:50,price:300},
+    {icon:"🌸",name:"Hóa Thần Đan",desc:"Max HP +100",effect:"hpmax",val:100,price:400},
+  ],
+  gear:[
+    {icon:"⚔️",name:"Phi Tiên Kiếm",desc:"+25 Công Kích",effect:"atk",val:25,price:400},
+    {icon:"🛡️",name:"Hộ Đạo Linh Giáp",desc:"+20 Phòng Thủ",effect:"def",val:20,price:350},
+    {icon:"💍",name:"Tốc Hành Bộ Vân Hài",desc:"+15 Tốc Độ",effect:"spd",val:15,price:300},
+    {icon:"🔮",name:"Thiên Cơ Linh Châu",desc:"+20 Trí Tuệ",effect:"int",val:20,price:380},
+    {icon:"📿",name:"Cát Hung Vận Chuyển Bài",desc:"+12 Vận May",effect:"lck",val:12,price:320},
+    {icon:"🏺",name:"Thiên Linh Bảo Bình",desc:"+30 Linh Lực Max",effect:"mpmax",val:30,price:350},
+  ],
+  misc:[
+    {icon:"🌿",name:"Linh Thảo Bó",desc:"+50 EXP luyện thể",effect:"body_exp",val:50,price:80},
+    {icon:"🗡️",name:"Kiếm Ý Ngọc Giản",desc:"+50 EXP luyện kiếm",effect:"sword_exp",val:50,price:80},
+    {icon:"⚗️",name:"Đan Lô Linh Hỏa",desc:"+50 EXP luyện đan",effect:"dan_exp",val:50,price:80},
+    {icon:"💠",name:"Linh Tinh Thạch",desc:"Nâng cấp kỹ năng miễn phí 1 lần",effect:"skill_up",val:1,price:500},
+    {icon:"🌈",name:"Ngũ Hành Linh Thạch",desc:"+3 tất cả thuộc tính",effect:"all_stat",val:3,price:600},
+    {icon:"🏆",name:"Đấu Trường Thẻ Vàng",desc:"+20 điểm đấu trường",effect:"arena_pts",val:20,price:800},
+  ],
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-const provider = new GoogleAuthProvider();
-
-// ========== GAME DATA ==========
-const REALMS = [
-  {cn:"煉氣", vn:"Luyện Khí", stages:9},
-  {cn:"築基", vn:"Trúc Cơ", stages:9},
-  {cn:"金丹", vn:"Kim Đan", stages:9},
-  {cn:"元嬰", vn:"Nguyên Anh", stages:9},
-  {cn:"化神", vn:"Hóa Thần", stages:9},
-  {cn:"合體", vn:"Hợp Thể", stages:3},
-  {cn:"大乘", vn:"Đại Thừa", stages:3},
-  {cn:"渡劫", vn:"Độ Kiếp", stages:3},
-  {cn:"真仙", vn:"Chân Tiên", stages:1}
+const WORLD_EVENTS_LIST=[
+  {icon:"⚡",msg:"Kiếm tu Thiên Ảnh vừa đột phá Kim Đan, chấn động thiên địa!",color:"#80c0ff"},
+  {icon:"🔴",msg:"Ma Hoàng Cung tấn công biên cương, Chính Phái cấp bách cần viện binh!",color:"#ff6080"},
+  {icon:"🌟",msg:"Thiên Cơ Các công bố Hóa Thần Đan xuất lô, giá 10000 linh thạch!",color:"#ffd080"},
+  {icon:"💎",msg:"Tiên Cung cổ tích khai mở tại phương Đông, cơ duyên đại phát!",color:"#80ffd0"},
+  {icon:"🐉",msg:"Cổ Long thức tỉnh tại Thiên Hủy Sơn, thiên địa biến sắc!",color:"#c080ff"},
+  {icon:"⛩️",msg:"Thanh Vân Tông chiêu sinh đệ tử, yêu cầu Trúc Cơ trở lên!",color:"#80c0ff"},
+  {icon:"☠️",msg:"U Minh Phái mở Địa Ngục Cửa, âm hồn tràn ra thiên hạ!",color:"#60a0b0"},
+  {icon:"🏆",msg:"Thiên Long Đấu Trường tháng này thưởng Hóa Thần Đan cho quán quân!",color:"#ffd700"},
 ];
 
-const MONSTERS = [
-  {icon:"🐺",name:"Lang Tinh",vn:"Yêu Thú Cấp 1",hp:80,atk:8,exp:20,gold:15,minRealm:0},
-  {icon:"🐗",name:"Linh Trư",vn:"Yêu Thú Cấp 2",hp:150,atk:14,exp:40,gold:30,minRealm:0},
-  {icon:"🦅",name:"Linh Ưng",vn:"Yêu Điểu",hp:120,atk:18,exp:50,gold:40,minRealm:1},
-  {icon:"🐉",name:"Tiểu Long",vn:"Dạng Long Yêu",hp:300,atk:25,exp:100,gold:80,minRealm:2},
-  {icon:"👹",name:"Tu La Quỷ",vn:"Ma Đạo Tu Sĩ",hp:250,atk:30,exp:120,gold:100,minRealm:3},
-  {icon:"🌊",name:"Hải Vương",vn:"Hải Vực Thần Thú",hp:600,atk:45,exp:250,gold:200,minRealm:4},
-  {icon:"☁️",name:"Vân Long",vn:"Cổ Thần Long",hp:1200,atk:80,exp:500,gold:400,minRealm:5},
-];
+/* ======================================================
+   GAME STATE
+   ====================================================== */
+let G={
+  uid:null,name:'',photo:'',
+  gender:'male',aptitude:0,mainPath:'spirit',
+  realmIdx:1,stage:1,
+  hp:100,hpMax:100,mp:50,mpMax:50,
+  exp:0,expNext:100,gold:100,level:1,
+  atk:10,def:5,spd:8,lck:3,int:10,str:10,
+  bodyLvl:1,bodyExp:0,bodyExpNext:50,
+  swordLvl:1,swordExp:0,swordExpNext:50,
+  danLvl:1,danExp:0,danExpNext:50,
+  sectId:'',sectMissionsProgress:{},
+  skills:[0,2], // owned skill indices
+  skillLevels:{0:1,2:1},
+  inventory:[],
+  cultTime:0,isCultivating:false,
+  boostPct:0,boostEnd:0,
+  arenaPoints:100,arenaWins:0,arenaLosses:0,
+  pickedSkills:[],
+  totalDmg:0,
+};
+let _cultInt=null,_autoSave=null;
 
-const SKILLS = [
-  {icon:"⚡",name:"Lôi Đình Chưởng",desc:"Triệu hồi sét thiên lôi đánh trúng kẻ thù, gây sát thương lớn",cost:20,lvl:1,bonus:"atk",bonusVal:5},
-  {icon:"🌊",name:"Thủy Long Ấn",desc:"Điều khiển nước hình thành rồng nước, tấn công hàng loạt",cost:30,lvl:1,bonus:"atk",bonusVal:7},
-  {icon:"🔥",name:"Viêm Long Quyết",desc:"Hỏa thiêm thiêu đốt kẻ thù liên tục trong nhiều vòng",cost:25,lvl:1,bonus:"atk",bonusVal:6},
-  {icon:"🛡️",name:"Thiết Bộ Kim Cương",desc:"Tu luyện thân thể đến kim cương bất hoại, tăng phòng thủ",cost:40,lvl:1,bonus:"def",bonusVal:8},
-  {icon:"💨",name:"Cửu U Phong Thể",desc:"Tốc độ vượt qua phong tốc, đối thủ không thể né tránh",cost:35,lvl:1,bonus:"spd",bonusVal:6},
-];
-
-const SHOP_ITEMS = [
-  {icon:"🍵",name:"Hồi Linh Đan",desc:"Hồi phục 100 HP",effect:"hp",val:100,price:50},
-  {icon:"💊",name:"Tụ Linh Đan",desc:"Hồi phục 100 MP",effect:"mp",val:100,price:40},
-  {icon:"⬆️",name:"Tu Vi Đan",desc:"+200 EXP ngay lập tức",effect:"exp",val:200,price:100},
-  {icon:"💎",name:"Thiên Địa Linh Thạch",desc:"+30% EXP tu luyện (30 giây)",effect:"boost",val:30,price:200},
-  {icon:"⚔️",name:"Phi Tiên Kiếm",desc:"+15 Công Kích vĩnh viễn",effect:"atk",val:15,price:300},
-  {icon:"🔮",name:"Linh Ngọc Hộ Pháp Pháp Bảo",desc:"+20 Phòng Thủ vĩnh viễn",effect:"def",val:20,price:350},
-];
-
-const WORLD_EVENTS = [
-  "⚔️ Đạo hữu Thiên Long vừa đột phá Kim Đan!",
-  "🌟 Linh Dược Cốc mở cửa bán Hóa Thần Đan",
-  "💀 Ma đạo xâm nhập — cẩn thận khi thám hiểm!",
-  "🏆 Tông môn đại tỷ vũ sắp bắt đầu vào ngày mai",
-  "☁️ Xuất hiện Thánh Địa mới ở phía Đông Hải",
-  "🐉 Nghe nói có cổ long thức tỉnh tại núi Thiên Hủy",
-];
-
-// ========== GAME STATE ==========
-let G = {
-  uid: null, name: '', photo: null,
-  realmIdx: 0, stage: 1,
-  hp: 100, hpMax: 100,
-  mp: 50, mpMax: 50,
-  exp: 0, expNext: 100,
-  gold: 100, level: 1,
-  atk: 10, def: 5, spd: 8, lck: 3,
-  skills: [{id:0,lvl:1},{id:2,lvl:1}],
-  inventory: [],
-  cultTime: 0,
-  isCultivating: false,
-  cultInterval: null,
-  boostActive: false,
+/* ======================================================
+   AUTH
+   ====================================================== */
+window.doLogin=async()=>{
+  try{ await signInWithPopup(auth,gProvider); }
+  catch(e){ notify('⚠️ Lỗi: '+e.message,'#ff6080'); }
+};
+window.doLogout=async()=>{
+  stopCult(); await saveGame(); await signOut(auth);
 };
 
-let cultTimer = 0;
-
-// ========== AUTH ==========
-window.loginGoogle = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-  } catch(e) { console.error(e); notify('⚠️ Lỗi đăng nhập: ' + e.message); }
-};
-window.logout = async () => {
-  if(G.cultInterval) clearInterval(G.cultInterval);
-  await saveGame();
-  await signOut(auth);
-};
-
-onAuthStateChanged(auth, async (user) => {
-  if(user) {
-    G.uid = user.uid;
-    G.name = user.displayName || 'Đạo Hữu';
-    G.photo = user.photoURL;
-    await loadGame();
-    showGame(user);
-  } else {
-    showLogin();
-  }
+onAuthStateChanged(auth,async user=>{
+  if(user){
+    G.uid=user.uid; G.name=user.displayName||'Đạo Hữu'; G.photo=user.photoURL||'';
+    const ok=await loadGame();
+    if(ok&&G.sectId){ showScreen('game'); initGame(); }
+    else if(ok&&G.realmIdx>0){ showScreen('sect'); renderSectGrid(); }
+    else { showScreen('char'); renderCharScreen(); }
+  } else { showScreen('login'); }
 });
 
-function showLogin() {
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('gameScreen').classList.add('hidden');
-}
-
-function showGame(user) {
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('gameScreen').classList.remove('hidden');
-  
-  document.getElementById('userName').textContent = G.name;
-  if(G.photo) {
-    document.getElementById('userAvatar').innerHTML = `<img src="${G.photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-  }
-  
-  renderAll();
-  startAutoSave();
-  loadLeaderboard();
-  renderWorldEvents();
-}
-
-// ========== SAVE/LOAD ==========
-async function saveGame() {
+/* ======================================================
+   SAVE / LOAD
+   ====================================================== */
+async function saveGame(){
   if(!G.uid) return;
-  const saveData = {
-    name: G.name, photo: G.photo || '',
-    realmIdx: G.realmIdx, stage: G.stage,
-    hp: G.hp, hpMax: G.hpMax, mp: G.mp, mpMax: G.mpMax,
-    exp: G.exp, expNext: G.expNext,
-    gold: G.gold, level: G.level,
-    atk: G.atk, def: G.def, spd: G.spd, lck: G.lck,
-    skills: G.skills,
-    inventory: G.inventory,
-    cultTime: G.cultTime,
-    realmScore: G.realmIdx * 9 + G.stage,
-    lastSave: Date.now()
+  const d={
+    name:G.name,photo:G.photo,gender:G.gender,aptitude:G.aptitude,mainPath:G.mainPath,
+    realmIdx:G.realmIdx,stage:G.stage,hp:G.hp,hpMax:G.hpMax,mp:G.mp,mpMax:G.mpMax,
+    exp:G.exp,expNext:G.expNext,gold:G.gold,level:G.level,
+    atk:G.atk,def:G.def,spd:G.spd,lck:G.lck,int:G.int,str:G.str,
+    bodyLvl:G.bodyLvl,bodyExp:G.bodyExp,bodyExpNext:G.bodyExpNext,
+    swordLvl:G.swordLvl,swordExp:G.swordExp,swordExpNext:G.swordExpNext,
+    danLvl:G.danLvl,danExp:G.danExp,danExpNext:G.danExpNext,
+    sectId:G.sectId,sectMissionsProgress:G.sectMissionsProgress||{},
+    skills:G.skills,skillLevels:G.skillLevels,
+    inventory:G.inventory,cultTime:G.cultTime,
+    arenaPoints:G.arenaPoints,arenaWins:G.arenaWins,arenaLosses:G.arenaLosses,
+    realmScore:G.realmIdx*9+G.stage, lastSave:Date.now()
   };
-  await set(ref(db, 'players/' + G.uid), saveData);
+  await set(ref(db,'players/'+G.uid),d);
+}
+async function loadGame(){
+  const snap=await get(ref(db,'players/'+G.uid));
+  if(snap.exists()){ Object.assign(G,snap.val()); G.isCultivating=false; return true; }
+  return false;
 }
 
-async function loadGame() {
-  const snap = await get(ref(db, 'players/' + G.uid));
-  if(snap.exists()) {
-    const d = snap.val();
-    Object.assign(G, d);
-    G.isCultivating = false; G.cultInterval = null;
-  }
-}
-
-function startAutoSave() {
-  setInterval(() => saveGame(), 30000);
-}
-
-// ========== RENDER ==========
-function renderAll() {
-  renderStats();
-  renderRealm();
-  renderMonsters();
-  renderSkills();
-  renderShop();
-  renderInventory();
-}
-
-function renderStats() {
-  const hpPct = Math.floor(G.hp/G.hpMax*100);
-  const mpPct = Math.floor(G.mp/G.mpMax*100);
-  const expPct = Math.floor(G.exp/G.expNext*100);
-  document.getElementById('hpBar').style.width = hpPct+'%';
-  document.getElementById('mpBar').style.width = mpPct+'%';
-  document.getElementById('expBar').style.width = expPct+'%';
-  document.getElementById('hpText').textContent = G.hp+'/'+G.hpMax;
-  document.getElementById('mpText').textContent = G.mp+'/'+G.mpMax;
-  document.getElementById('expText').textContent = G.exp+'/'+G.expNext;
-  document.getElementById('atk').textContent = G.atk;
-  document.getElementById('def').textContent = G.def;
-  document.getElementById('spd').textContent = G.spd;
-  document.getElementById('lck').textContent = G.lck;
-  document.getElementById('topGold').textContent = G.gold;
-  document.getElementById('topLevel').textContent = G.level;
-}
-
-function renderRealm() {
-  const r = REALMS[G.realmIdx];
-  document.getElementById('realmCN').textContent = r.cn;
-  const stageName = `${r.vn.toUpperCase()} · TẦNG ${G.stage}`;
-  document.getElementById('realmStage').textContent = stageName;
-  document.getElementById('realmBadge').textContent = r.vn + ' · Tầng ' + G.stage;
-  const speed = 5 + G.level * 2 + (G.boostActive ? Math.floor((5+G.level*2)*0.3) : 0);
-  document.getElementById('cultSpeed').textContent = speed + ' EXP/s';
-  const mins = Math.floor(G.cultTime/60);
-  document.getElementById('totalCultTime').textContent = mins < 60 ? mins + ' phút' : Math.floor(mins/60) + ' giờ ' + (mins%60) + ' phút';
-}
-
-function renderMonsters() {
-  const list = document.getElementById('monsterList');
-  const playerRealm = G.realmIdx;
-  list.innerHTML = MONSTERS.map((m,i) => {
-    const locked = m.minRealm > playerRealm;
-    return `<div class="monster-card ${locked?'style="opacity:0.4;cursor:not-allowed"':''}" onclick="${locked?'notify(\'⚠️ Cần đạt '+REALMS[m.minRealm].vn+' để thách đấu!\')':'fight('+i+')'}">
-      <div class="monster-icon">${m.icon}</div>
-      <div class="monster-info">
-        <h4>${m.name} ${locked?'🔒':''}</h4>
-        <p>${m.vn} · HP: ${m.hp} · ATK: ${m.atk}</p>
-      </div>
-      <div class="monster-reward">
-        <div class="exp">+${m.exp} EXP</div>
-        <div class="gold">+${m.gold} 💎</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderSkills() {
-  const list = document.getElementById('skillList');
-  list.innerHTML = SKILLS.map((s,i) => {
-    const owned = G.skills.find(x=>x.id===i);
-    const lvl = owned ? owned.lvl : 0;
-    const upgradeCost = owned ? (lvl * 50) : s.cost;
-    const canAfford = G.gold >= upgradeCost;
-    return `<div class="skill-card">
-      <div class="skill-icon">${s.icon}</div>
-      <div class="skill-info">
-        <h4>${s.name}</h4>
-        <p>${s.desc}</p>
-        <div class="skill-level">${owned ? '⭐ Cấp '+lvl+' · +'+((s.bonusVal)*lvl)+' '+s.bonus.toUpperCase() : '🔒 Chưa học'}</div>
-      </div>
-      <button class="btn-upgrade" ${(!canAfford&&!owned)?'disabled':''} onclick="upgradeSkill(${i})">
-        ${owned ? '▲ Nâng ('+upgradeCost+'💎)' : '📖 Học ('+s.cost+'💎)'}
-      </button>
-    </div>`;
-  }).join('');
-}
-
-function renderShop() {
-  const grid = document.getElementById('shopGrid');
-  grid.innerHTML = SHOP_ITEMS.map((item,i) => `
-    <div class="shop-item" onclick="buyItem(${i})">
-      <span class="item-icon">${item.icon}</span>
-      <div class="item-name">${item.name}</div>
-      <div class="item-desc">${item.desc}</div>
-      <div class="item-price">${item.price}</div>
-    </div>
-  `).join('');
-}
-
-function renderInventory() {
-  const list = document.getElementById('inventoryList');
-  document.getElementById('invCount').textContent = G.inventory.length;
-  if(!G.inventory.length) { list.innerHTML = '<div style="text-align:center;padding:10px 0;color:var(--text-dim);font-size:0.75rem">Túi đồ trống...</div>'; return; }
-  list.innerHTML = G.inventory.map((item,i) => `
-    <div style="display:flex;align-items:center;gap:8px;padding:6px;border:1px solid rgba(0,229,200,0.1);border-radius:6px;margin-bottom:4px;cursor:pointer;" onclick="useItem(${i})">
-      <span>${item.icon}</span>
-      <span style="flex:1;font-size:0.75rem">${item.name}</span>
-      <span style="font-size:0.65rem;color:var(--text-jade)">Dùng</span>
-    </div>
-  `).join('');
-}
-
-function renderWorldEvents() {
-  const el = document.getElementById('worldEvents');
-  el.innerHTML = WORLD_EVENTS.map((ev,i) => `
-    <div class="event-item">
-      <div class="time">${i*5+2} phút trước</div>
-      <div class="msg">${ev}</div>
-    </div>
-  `).join('');
-}
-
-function loadLeaderboard() {
-  const q = query(ref(db, 'players'), orderByChild('realmScore'), limitToLast(10));
-  onValue(q, snap => {
-    const entries = [];
-    snap.forEach(child => entries.unshift({name: child.val().name, realm: child.val().realmIdx||0, stage: child.val().stage||1}));
-    const el = document.getElementById('leaderboard');
-    el.innerHTML = entries.slice(0,8).map((e,i) => `
-      <div class="leaderboard-entry">
-        <div class="rank-num">${i+1}</div>
-        <div class="rank-info">
-          <div class="name">${e.name}</div>
-          <div class="realm">${REALMS[e.realm].vn} · Tầng ${e.stage}</div>
-        </div>
-      </div>
-    `).join('') || '<div style="color:var(--text-dim);font-size:0.75rem;text-align:center;padding:10px">Chưa có dữ liệu</div>';
+/* ======================================================
+   SCREEN MANAGEMENT
+   ====================================================== */
+function showScreen(id){
+  ['loginScreen','charScreen','sectScreen','gameScreen'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden',s!==id+'Screen');
   });
 }
 
-// ========== CULTIVATION ==========
-window.toggleCultivate = () => {
-  G.isCultivating = !G.isCultivating;
-  const btn = document.getElementById('cultBtn');
-  if(G.isCultivating) {
-    btn.textContent = '⏸ Dừng Tu Luyện';
-    btn.classList.add('active');
-    document.getElementById('cultStatus').textContent = '✨ Đang hấp thụ linh khí thiên địa...';
-    G.cultInterval = setInterval(() => {
-      const speed = 5 + G.level * 2 + (G.boostActive ? Math.floor((5+G.level*2)*0.3) : 0);
-      gainExp(speed);
-      G.cultTime++;
-      // Regen HP/MP
-      if(G.hp < G.hpMax) G.hp = Math.min(G.hpMax, G.hp + 2);
-      if(G.mp < G.mpMax) G.mp = Math.min(G.mpMax, G.mp + 1);
-      renderStats();
-      renderRealm();
-    }, 1000);
-  } else {
-    btn.textContent = '▶ Bắt Đầu Tu Luyện';
-    btn.classList.remove('active');
-    document.getElementById('cultStatus').textContent = '';
-    clearInterval(G.cultInterval);
-    G.cultInterval = null;
-  }
+/* ======================================================
+   CHARACTER CREATION
+   ====================================================== */
+function renderCharScreen(){
+  // Aptitude grid
+  const ag=document.getElementById('aptGrid');
+  ag.innerHTML=APTITUDES.map((a,i)=>
+    `<div class="apt-card${i===G.aptitude?' selected':''}" onclick="pickApt(${i})">
+      <span class="apt-icon">${a.icon}</span>
+      <span class="apt-name">${a.name.split(' ')[0]}</span>
+    </div>`).join('');
+  // Path select
+  const pg=document.getElementById('pathSelectGrid');
+  pg.innerHTML=PATH_MAINS.map(p=>
+    `<div class="path-card${p.id===G.mainPath?' selected':''}" 
+      style="border-color:${p.id===G.mainPath?p.color:'rgba(255,255,255,0.06)'}"
+      onclick="pickPath('${p.id}')">
+      <h4 style="color:${p.color}">${p.icon} ${p.name}</h4>
+      <p>${p.bonus}</p>
+    </div>`).join('');
+  updateStartStats();
+}
+
+window.pickGender=id=>{
+  G.gender=id;
+  document.getElementById('gcard-male').classList.toggle('selected',id==='male');
+  document.getElementById('gcard-female').classList.toggle('selected',id==='female');
+};
+window.pickApt=i=>{
+  G.aptitude=i;
+  document.querySelectorAll('.apt-card').forEach((c,j)=>c.classList.toggle('selected',i===j));
+  updateStartStats();
+};
+window.pickPath=id=>{
+  G.mainPath=id;
+  document.querySelectorAll('#pathSelectGrid .path-card').forEach((c,j)=>{
+    const p=PATH_MAINS[j];
+    c.classList.toggle('selected',p.id===id);
+    c.style.borderColor=p.id===id?p.color:'rgba(255,255,255,0.06)';
+  });
+  updateStartStats();
 };
 
-function gainExp(amount) {
-  G.exp += amount;
-  if(G.exp >= G.expNext) {
-    G.exp -= G.expNext;
-    levelUp();
-  }
-  renderStats();
+function updateStartStats(){
+  const a=APTITUDES[G.aptitude];
+  const stats={atk:10,def:5,spd:8,lck:3,int:10,str:10};
+  stats[a.bonus]=(stats[a.bonus]||0)+a.val;
+  if(G.mainPath==='body'){stats.str+=5;stats.def+=5;}
+  if(G.mainPath==='sword'){stats.atk+=8;}
+  if(G.mainPath==='pill'){stats.int+=8;}
+  document.getElementById('startStatsPreview').innerHTML=
+    Object.entries(stats).map(([k,v])=>`<span style="color:var(--tx2)">${
+      {atk:'⚔ Công',def:'🛡 Thủ',spd:'⚡ Tốc',lck:'🍀 Vận',int:'🌟 Tuệ',str:'💪 Lực'}[k]
+    }: <span style="color:var(--gold)">${v}</span></span>`).join('');
 }
 
-function levelUp() {
-  G.level++;
-  G.stage++;
-  const r = REALMS[G.realmIdx];
-  if(G.stage > r.stages) {
-    G.stage = 1;
-    G.realmIdx = Math.min(G.realmIdx + 1, REALMS.length - 1);
-    G.expNext = Math.floor(G.expNext * 3);
-    breakthrough();
-  } else {
-    G.expNext = Math.floor(G.expNext * 1.8);
-    notify('🌟 Tầng mới: ' + REALMS[G.realmIdx].vn + ' Tầng ' + G.stage + '!');
-  }
-  // Stat boosts
-  G.hpMax += 30 + G.realmIdx * 20;
-  G.mpMax += 10 + G.realmIdx * 10;
-  G.hp = G.hpMax;
-  G.mp = G.mpMax;
-  G.atk += 3 + G.realmIdx;
-  G.def += 2 + G.realmIdx;
-  G.spd += 1;
-  renderRealm();
-  renderStats();
+window.createChar=()=>{
+  const nm=document.getElementById('charNameInp').value.trim();
+  if(!nm){ notify('⚠️ Nhập đạo hiệu đi đã!'); return; }
+  if(!G.gender){ notify('⚠️ Chọn tính biệt trước!'); return; }
+  G.name=nm;
+  const a=APTITUDES[G.aptitude];
+  G[a.bonus]=(G[a.bonus]||0)+a.val;
+  if(G.mainPath==='body'){G.str+=5;G.def+=5;}
+  if(G.mainPath==='sword'){G.atk+=8;}
+  if(G.mainPath==='pill'){G.int+=8;}
+  G.hp=G.hpMax=100+G.def*2;
+  G.mp=G.mpMax=50+G.int*2;
+  showScreen('sect'); renderSectGrid();
+};
+
+/* ======================================================
+   SECT SELECTION
+   ====================================================== */
+function renderSectGrid(){
+  const grid=document.getElementById('sectGrid');
+  grid.innerHTML=SECTS.map(s=>
+    `<div class="sect-card${G.sectId===s.id?' selected':''}" id="sc-${s.id}"
+      style="box-shadow:${G.sectId===s.id?`0 0 30px ${s.glowColor}40`:'none'}"
+      onclick="pickSect('${s.id}')">
+      <div class="sect-banner" style="background:${s.bg}">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,${s.glowColor}15 0%,transparent 70%)"></div>
+        <div class="sect-banner-icon" style="color:${s.glowColor}">${s.icon}</div>
+      </div>
+      <div class="sect-body">
+        <div class="sect-name-cn" style="color:${s.glowColor}">${s.name}</div>
+        <div class="sect-name-vn">${s.vn}</div>
+        <div class="sect-type-badge" style="background:${s.typeColor}20;color:${s.typeColor};border:1px solid ${s.typeColor}40">${s.type}</div>
+        <div class="sect-desc">${s.desc}</div>
+        <div class="sect-bonuses">${s.bonuses.map(b=>`<span class="bonus-tag">${b}</span>`).join('')}</div>
+      </div>
+      <div class="sect-select-check" style="background:${s.glowColor}">✓</div>
+    </div>`
+  ).join('');
 }
 
-function breakthrough() {
-  const r = REALMS[G.realmIdx];
-  document.getElementById('btRealmText').textContent = '🎉 Đã đạt ' + r.vn + '!';
-  document.getElementById('breakthroughOverlay').classList.add('show');
-  addParticlesBurst();
+window.pickSect=id=>{
+  G.sectId=id;
+  document.querySelectorAll('.sect-card').forEach(c=>{
+    const sid=c.id.replace('sc-','');
+    const s=SECTS.find(x=>x.id===sid);
+    c.classList.toggle('selected',sid===id);
+    c.style.boxShadow=sid===id?`0 0 30px ${s.glowColor}40`:'none';
+  });
+};
+
+window.joinSect=()=>{
+  if(!G.sectId){ notify('⚠️ Chọn tông môn trước!'); return; }
+  const sect=SECTS.find(s=>s.id===G.sectId);
+  // Apply sect bonus
+  if(G.sectId==='qingyun'){G.atk+=5;G.spd+=3;}
+  else if(G.sectId==='mohung'){G.atk+=10;G.def-=3;}
+  else if(G.sectId==='luyenthe'){G.def+=10;G.str+=8;}
+  else if(G.sectId==='tiencoge'){G.int+=8;G.gold+=200;}
+  else if(G.sectId==='youming'){G.spd+=8;G.lck+=5;}
+  notify(`⛩ Đã bái nhập ${sect.vn}!`,'var(--gold)');
+  showScreen('game'); initGame();
   saveGame();
-}
-
-window.closeBt = () => {
-  document.getElementById('breakthroughOverlay').classList.remove('show');
 };
 
-// ========== COMBAT ==========
-window.fight = (monsterIdx) => {
-  const m = MONSTERS[monsterIdx];
-  const log = document.getElementById('battleLog');
-  log.innerHTML = '';
-  log.classList.add('visible');
+/* ======================================================
+   GAME INIT
+   ====================================================== */
+function initGame(){
+  updateTopbar();
+  renderCharSvg();
+  renderStats();
+  renderRealm();
+  renderZones();
+  renderSkillList();
+  renderShop('pills');
+  renderPaths();
+  renderSectMissions();
+  renderArena();
+  renderWorldEvents();
+  loadArenaLeaderboard();
+  _autoSave=setInterval(()=>saveGame(),30000);
+  notify(`✨ Chào mừng ${G.name} trở lại!`);
+}
 
-  if(G.hp < G.hpMax * 0.3) {
-    notify('⚠️ HP quá thấp! Hãy uống thuốc hoặc tu luyện để hồi HP!');
-    return;
+/* ======================================================
+   RENDER FUNCTIONS
+   ====================================================== */
+function updateTopbar(){
+  document.getElementById('tbName').textContent=G.name;
+  document.getElementById('tbRealm').textContent=`${REALMS[G.realmIdx].vn} · Tầng ${G.stage}`;
+  document.getElementById('chip-hp').textContent=`${G.hp}/${G.hpMax}`;
+  document.getElementById('chip-mp').textContent=`${G.mp}/${G.mpMax}`;
+  document.getElementById('chip-gold').textContent=G.gold;
+  document.getElementById('chip-lv').textContent=G.level;
+  if(G.photo){
+    document.getElementById('tbAvatar').innerHTML=`<img src="${G.photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
   }
-
-  let mHp = m.hp;
-  let pHp = G.hp;
-  let round = 0;
-  const maxRounds = 20;
-
-  function addLog(text, cls='') {
-    const div = document.createElement('div');
-    div.className = 'log-line ' + cls;
-    div.textContent = text;
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+  const sect=SECTS.find(s=>s.id===G.sectId);
+  if(sect){
+    document.getElementById('tbSectBadge').innerHTML=
+      `<span style="color:${sect.glowColor}">${sect.icon}</span>
+       <span style="font-size:0.72rem;color:${sect.glowColor};font-family:var(--f-ui)">${sect.vn}</span>`;
+    document.getElementById('tbSectBadge').style.cssText=
+      `background:${sect.glowColor}12;border:1px solid ${sect.glowColor}30;border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px;`;
   }
+}
 
-  addLog(`⚔️ Chiến đấu bắt đầu: ${m.icon} ${m.name} (HP: ${m.hp})`,'log-sys');
+function renderCharSvg(){
+  const el=document.getElementById('charDisplaySvg');
+  const sect=SECTS.find(s=>s.id===G.sectId);
+  const auraColor=sect?sect.glowColor:'#00e5c8';
+  if(G.gender==='male'){
+    el.innerHTML=`<svg width="100" height="140" viewBox="0 0 80 140" style="filter:drop-shadow(0 0 8px ${auraColor}60)">
+      <defs>
+        <linearGradient id="gr-m" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a3a5c"/><stop offset="100%" stop-color="#0a1828"/>
+        </linearGradient>
+        <linearGradient id="gs-m" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c8a080"/><stop offset="100%" stop-color="#a07858"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="40" cy="138" rx="20" ry="3" fill="rgba(0,0,0,0.4)"/>
+      <path d="M28 60 Q15 80 12 120 Q18 122 24 120 L26 90 L30 140 L50 140 L54 90 L56 120 Q62 122 68 120 Q65 80 52 60 Z" fill="url(#gr-m)"/>
+      <rect x="24" y="75" width="32" height="5" rx="2" fill="#1a4a7a" opacity="0.7"/>
+      <path d="M28 62 Q10 70 8 85 Q12 87 14 84 Q18 75 30 68 Z" fill="url(#gr-m)" opacity="0.9"/>
+      <path d="M52 62 Q70 70 72 85 Q68 87 66 84 Q62 75 50 68 Z" fill="url(#gr-m)" opacity="0.9"/>
+      <rect x="36" y="48" width="8" height="14" rx="4" fill="url(#gs-m)"/>
+      <ellipse cx="40" cy="38" rx="14" ry="16" fill="url(#gs-m)"/>
+      <path d="M26 32 Q20 20 28 10 Q40 4 52 10 Q60 20 54 32" fill="#1a1008"/>
+      <path d="M52 30 Q62 40 58 60 Q52 62 50 58 Q54 45 48 35" fill="#1a1008" opacity="0.8"/>
+      <path d="M28 30 Q18 40 22 60 Q28 62 30 58 Q26 45 32 35" fill="#1a1008" opacity="0.8"/>
+      <rect x="36" y="8" width="8" height="6" rx="3" fill="#8b0000" opacity="0.8"/>
+      <ellipse cx="34" cy="38" rx="2" ry="2.5" fill="#1a1008"/>
+      <ellipse cx="46" cy="38" rx="2" ry="2.5" fill="#1a1008"/>
+      <path d="M36 46 Q40 49 44 46" fill="none" stroke="#8b4030" stroke-width="1"/>
+      <ellipse cx="40" cy="76" rx="3" ry="4" fill="${auraColor}" opacity="0.6"/>
+      <ellipse cx="40" cy="38" rx="16" ry="18" fill="none" stroke="${auraColor}" stroke-width="0.5" opacity="0.4"/>
+    </svg>`;
+  } else {
+    el.innerHTML=`<svg width="100" height="140" viewBox="0 0 80 140" style="filter:drop-shadow(0 0 8px ${auraColor}60)">
+      <defs>
+        <linearGradient id="gr-f" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3a1040"/><stop offset="100%" stop-color="#1a0820"/>
+        </linearGradient>
+        <linearGradient id="gs-f" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e8c4a0"/><stop offset="100%" stop-color="#c09878"/>
+        </linearGradient>
+        <radialGradient id="orb-fg" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="${auraColor}" stop-opacity="0.3"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="40" cy="138" rx="20" ry="3" fill="rgba(0,0,0,0.4)"/>
+      <path d="M30 65 Q15 85 8 130 Q16 133 24 130 L28 95 L30 140 L50 140 L52 95 L56 130 Q64 133 72 130 Q65 85 50 65 Z" fill="url(#gr-f)" opacity="0.95"/>
+      <path d="M22 72 Q40 68 58 72 L60 78 Q40 82 20 78 Z" fill="#c84080" opacity="0.7"/>
+      <path d="M30 65 Q10 68 4 88 Q8 94 12 90 Q18 76 32 70 Z" fill="url(#gr-f)" opacity="0.9"/>
+      <path d="M50 65 Q70 68 76 88 Q72 94 68 90 Q62 76 48 70 Z" fill="url(#gr-f)" opacity="0.9"/>
+      <rect x="36" y="50" width="8" height="14" rx="4" fill="url(#gs-f)"/>
+      <ellipse cx="40" cy="38" rx="13" ry="15" fill="url(#gs-f)"/>
+      <path d="M27 34 Q22 18 30 8 Q40 2 50 8 Q58 18 53 34" fill="#0a0808"/>
+      <ellipse cx="40" cy="6" rx="10" ry="6" fill="#0a0808"/>
+      <line x1="32" y1="4" x2="48" y2="4" stroke="#ffd700" stroke-width="1.5" opacity="0.9"/>
+      <path d="M27 34 Q20 44 22 62 Q26 64 28 60 Q26 48 30 38" fill="#0a0808" opacity="0.85"/>
+      <path d="M53 34 Q60 44 58 62 Q54 64 52 60 Q54 48 50 38" fill="#0a0808" opacity="0.85"/>
+      <ellipse cx="34" cy="37" rx="1.8" ry="2.2" fill="#1a1008"/>
+      <ellipse cx="46" cy="37" rx="1.8" ry="2.2" fill="#1a1008"/>
+      <path d="M37 46 Q40 48.5 43 46" fill="#e06070" stroke="#c04050" stroke-width="0.5"/>
+      <circle cx="10" cy="88" r="8" fill="url(#orb-fg)" opacity="0.85"/>
+      <circle cx="10" cy="88" r="10" fill="none" stroke="${auraColor}" stroke-width="0.5" opacity="0.5"/>
+      <ellipse cx="40" cy="38" rx="15" ry="17" fill="none" stroke="${auraColor}" stroke-width="0.5" opacity="0.4"/>
+    </svg>`;
+  }
+}
 
-  const interval = setInterval(() => {
+function renderStats(){
+  const hp=G.hp/G.hpMax*100,mp=G.mp/G.mpMax*100,exp=G.exp/G.expNext*100;
+  const body=G.bodyExp/G.bodyExpNext*100,sword=G.swordExp/G.swordExpNext*100;
+  sb('hp',hp);sb('mp',mp);sb('exp',exp);sb('body',body);sb('sword',sword);
+  document.getElementById('s-hp').textContent=`${G.hp}/${G.hpMax}`;
+  document.getElementById('s-mp').textContent=`${G.mp}/${G.mpMax}`;
+  document.getElementById('s-exp').textContent=`${G.exp}/${G.expNext}`;
+  document.getElementById('s-body').textContent=`Lv.${G.bodyLvl} ${BODY_STAGES[Math.min(G.bodyLvl-1,BODY_STAGES.length-1)]}`;
+  document.getElementById('s-sword').textContent=`Lv.${G.swordLvl} ${SWORD_GRADES[Math.min(G.swordLvl-1,SWORD_GRADES.length-1)]}`;
+  ['atk','def','spd','lck','int','str'].forEach(k=>document.getElementById('a-'+k).textContent=G[k]);
+  updateTopbar();
+}
+function sb(id,pct){
+  document.getElementById('b-'+id).style.width=Math.min(100,Math.max(0,pct))+'%';
+}
+
+function renderRealm(){
+  const r=REALMS[G.realmIdx];
+  document.getElementById('realmBig').textContent=r.cn;
+  document.getElementById('stageBig').textContent=`${r.vn.toUpperCase()} · TẦNG ${G.stage}`;
+  document.getElementById('tbRealm').textContent=`${r.vn} · Tầng ${G.stage}`;
+  const spd=getCultSpeed();
+  document.getElementById('cultSpeedTxt').textContent=`+${spd} EXP/s`;
+  document.getElementById('cultSpdTxt2').textContent=spd+'/s';
+  const mins=Math.floor(G.cultTime/60);
+  document.getElementById('cultTimeTxt').textContent=mins<60?mins+'p':Math.floor(mins/60)+'h'+(mins%60)+'p';
+  document.getElementById('boostBadge').textContent=G.boostPct>0?`+${G.boostPct}% Tăng Tốc 🚀`:'Bình thường';
+}
+
+function getCultSpeed(){
+  const base=5+G.level*2+G.int;
+  const boost=G.boostPct>0&&Date.now()<G.boostEnd?Math.floor(base*G.boostPct/100):0;
+  return base+boost;
+}
+
+function renderZones(){
+  const el=document.getElementById('zoneList');
+  el.innerHTML=ZONES.map((z,i)=>{
+    const locked=z.minRealm>G.realmIdx;
+    return `<div class="zone-card" style="background:${z.bg};border-color:${z.color}30"
+      onclick="${locked?`notify('🔒 Cần ${REALMS[z.minRealm].vn} để vào đây')`:`enterZone(${i})`}">
+      <div class="zone-ico">${z.icon}</div>
+      <div class="zone-info">
+        <h4 style="color:${z.color}">${z.name}</h4>
+        <p>${z.desc}</p>
+      </div>
+      <div class="zone-reward">
+        <div class="r-exp">+${z.mobs[0].exp}~${z.mobs[1].exp} EXP</div>
+        <div class="r-gold">+${z.mobs[0].gold}~${z.mobs[1].gold} 💎</div>
+      </div>
+      ${locked?`<div class="lock-overlay">🔒 ${REALMS[z.minRealm].vn}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+window.enterZone=zi=>{
+  const z=ZONES[zi];
+  const mob=z.mobs[Math.floor(Math.random()*z.mobs.length)];
+  const log=document.getElementById('battleLog');
+  log.classList.add('vis');
+  log.innerHTML='';
+  if(G.hp<G.hpMax*0.25){notify('⚠️ HP quá thấp! Hãy uống Hồi Linh Đan!');return;}
+  let mHp=mob.hp, pHp=G.hp, round=0;
+  addBattleLog(log,`⚔️ Chạm trán ${mob.n} (HP:${mob.hp} ATK:${mob.atk})!`,'ll-sys');
+  const inv=setInterval(()=>{
     round++;
-    // Player attacks
-    const crit = Math.random() < G.lck * 0.01;
-    let dmgToM = Math.max(1, G.atk - Math.floor(m.atk * 0.1) + Math.floor(Math.random()*5));
-    if(crit) { dmgToM = Math.floor(dmgToM * 1.8); }
-    mHp -= dmgToM;
-    addLog(`⚔️ Bạn công kích ${m.name}: -${dmgToM} HP${crit?' 💥CHÍ MẠNG!':''}`, 'log-dmg');
-
-    if(mHp <= 0) {
-      clearInterval(interval);
-      addLog(`✅ ${m.name} đã bị tiêu diệt!`, 'log-sys');
-      addLog(`+${m.exp} EXP`, 'log-exp');
-      addLog(`+${m.gold} 💎 Linh Thạch`, 'log-gold');
-      gainExp(m.exp);
-      G.gold += m.gold;
-      G.hp = pHp;
-      // Random drop
-      if(Math.random() < 0.2) {
-        const drops = ['🍵 Hồi Linh Đan','⚗️ Linh Dược','💎 Linh Thạch Mảnh'];
-        const drop = drops[Math.floor(Math.random()*drops.length)];
-        addLog('🎁 Rơi đồ: ' + drop, 'log-gold');
-        const parts = drop.split(' ');
-        G.inventory.push({icon:parts[0], name:parts.slice(1).join(' ')});
-        renderInventory();
+    const crit=Math.random()<G.lck*0.015;
+    let dmg=Math.max(1,G.atk+Math.floor(Math.random()*G.atk*0.3)-Math.floor(mob.atk*0.05));
+    if(crit) dmg=Math.floor(dmg*2);
+    mHp-=dmg;
+    addBattleLog(log,`⚔ Tấn công ${mob.n}: -${dmg}${crit?' 💥CHÍ MẠNG!':''}`,crit?'ll-crit':'ll-dmg');
+    if(mHp<=0){
+      clearInterval(inv);
+      addBattleLog(log,`✅ ${mob.n} đã chết!`,'ll-sys');
+      addBattleLog(log,`+${mob.exp} EXP`,'ll-exp');
+      addBattleLog(log,`+${mob.gold} 💎`,'ll-gold');
+      gainExp(mob.exp); G.gold+=mob.gold; G.hp=pHp;
+      // Sub-system exp gains
+      gainBodyExp(Math.floor(mob.exp*0.3));
+      gainSwordExp(Math.floor(mob.exp*0.2));
+      // Drop
+      if(Math.random()<0.15+G.lck*0.005){
+        const drops=['🍵 Hồi Linh Đan','⚗️ Linh Dược Tinh','💎 Linh Thạch Mảnh','📜 Công Pháp殘頁'];
+        const d=drops[Math.floor(Math.random()*drops.length)];
+        addBattleLog(log,'🎁 Rơi đồ: '+d,'ll-gold');
+        G.inventory.push({icon:d.split(' ')[0],name:d.split(' ').slice(1).join(' ')});
       }
-      renderStats();
-      saveGame();
-      notify('⚔️ Chiến thắng! +'+m.exp+' EXP, +'+m.gold+' 💎');
+      renderStats(); renderInventory(); saveGame();
+      updateSectMissionProg('kill',1);
       return;
     }
-
-    // Monster attacks
-    const dmgToP = Math.max(1, m.atk - G.def + Math.floor(Math.random()*6));
-    pHp -= dmgToP;
-    addLog(`💢 ${m.name} phản công: -${dmgToP} HP`, 'log-dmg');
-
-    if(pHp <= 0 || round >= maxRounds) {
-      clearInterval(interval);
-      if(pHp <= 0) {
-        addLog(`💀 Bạn đã bị đánh bại!`, 'log-sys');
-        G.hp = Math.floor(G.hpMax * 0.2);
-        notify('💀 Thua trận! HP còn 20%');
+    const mAtk=Math.max(1,mob.atk-Math.floor(G.def*0.5)+Math.floor(Math.random()*6));
+    pHp=Math.max(0,pHp-mAtk);
+    addBattleLog(log,`💢 ${mob.n} phản: -${mAtk}`,'ll-dmg');
+    if(pHp<=0||round>=25){
+      clearInterval(inv);
+      if(pHp<=0){
+        addBattleLog(log,'💀 Ngươi đã bị đánh bại!','ll-sys');
+        G.hp=Math.floor(G.hpMax*0.15);
+        notify('💀 Thua trận! HP còn 15%');
       } else {
-        addLog(`⏰ Hết thời gian chiến đấu, hòa!`, 'log-sys');
-        G.hp = pHp;
+        G.hp=pHp;
+        addBattleLog(log,'⏰ Hết thời gian chiến đấu, hòa!','ll-sys');
       }
       renderStats();
-    } else {
-      G.hp = pHp;
-    }
-  }, 500);
+    } else { G.hp=pHp; }
+  },600);
 };
 
-// ========== SKILLS ==========
-window.upgradeSkill = (idx) => {
-  const s = SKILLS[idx];
-  const owned = G.skills.find(x=>x.id===idx);
-  if(!owned) {
-    if(G.gold < s.cost) { notify('⚠️ Không đủ Linh Thạch!'); return; }
-    G.gold -= s.cost;
-    G.skills.push({id:idx,lvl:1});
-    G[s.bonus] += s.bonusVal;
-    notify('📖 Học thành công: ' + s.name);
+function addBattleLog(el,txt,cls){
+  const d=document.createElement('div');d.className='ll '+cls;d.textContent=txt;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+
+/* ======================================================
+   CULTIVATION
+   ====================================================== */
+window.toggleCult=()=>{
+  G.isCultivating=!G.isCultivating;
+  const btn=document.getElementById('cultBtn');
+  const orb=document.getElementById('cultOrb');
+  if(G.isCultivating){
+    btn.textContent='⏸ Dừng Tu Luyện';btn.classList.add('on');
+    orb.classList.add('active');
+    document.getElementById('cultStatus').textContent='✨ Đang hấp thụ linh khí...';
+    _cultInt=setInterval(()=>{
+      const s=getCultSpeed();gainExp(s);
+      G.cultTime++;G.mp=Math.min(G.mpMax,G.mp+1);
+      G.hp=Math.min(G.hpMax,G.hp+1);
+      renderStats();renderRealm();
+    },1000);
   } else {
-    const cost = owned.lvl * 50;
-    if(G.gold < cost) { notify('⚠️ Không đủ Linh Thạch! Cần '+cost+' 💎'); return; }
-    G.gold -= cost;
-    owned.lvl++;
-    G[s.bonus] += s.bonusVal;
-    notify('⭐ Nâng cấp: ' + s.name + ' → Cấp ' + owned.lvl);
+    btn.textContent='▶ Bắt Đầu Tu Luyện';btn.classList.remove('on');
+    orb.classList.remove('active');
+    document.getElementById('cultStatus').textContent='';
+    clearInterval(_cultInt);_cultInt=null;
   }
-  renderStats();
-  renderSkills();
-  saveGame();
 };
 
-// ========== SHOP ==========
-window.buyItem = (idx) => {
-  const item = SHOP_ITEMS[idx];
-  if(G.gold < item.price) { notify('⚠️ Không đủ Linh Thạch! Cần ' + item.price + ' 💎'); return; }
-  G.gold -= item.price;
-  
-  if(item.effect === 'hp') { G.hp = Math.min(G.hpMax, G.hp + item.val); notify('🍵 Hồi phục +'+item.val+' HP!'); }
-  else if(item.effect === 'mp') { G.mp = Math.min(G.mpMax, G.mp + item.val); notify('💊 Hồi phục +'+item.val+' MP!'); }
-  else if(item.effect === 'exp') { gainExp(item.val); notify('⬆️ +'+item.val+' EXP!'); }
-  else if(item.effect === 'boost') {
-    G.boostActive = true;
-    notify('💎 Tăng tốc EXP +30% trong 30 giây!');
-    setTimeout(() => { G.boostActive = false; notify('💎 Hiệu ứng tăng tốc kết thúc'); }, 30000);
-  }
-  else if(item.effect === 'atk') { G.atk += item.val; notify('⚔️ +'+item.val+' Công Kích!'); }
-  else if(item.effect === 'def') { G.def += item.val; notify('🔮 +'+item.val+' Phòng Thủ!'); }
+function stopCult(){
+  if(G.isCultivating){G.isCultivating=false;clearInterval(_cultInt);_cultInt=null;}
+}
 
+function gainExp(amt){
+  G.exp+=Math.floor(amt);
+  while(G.exp>=G.expNext){G.exp-=G.expNext;levelUp();}
   renderStats();
-  saveGame();
-};
+}
 
-// ========== INVENTORY ==========
-window.useItem = (idx) => {
-  const item = G.inventory[idx];
-  if(!item) return;
-  if(item.name.includes('Đan') || item.name.includes('Linh Dược')) {
-    G.hp = Math.min(G.hpMax, G.hp + 80);
-    notify('🍵 Sử dụng '+item.name+': +80 HP');
-    G.inventory.splice(idx, 1);
-    renderInventory();
-    renderStats();
+function levelUp(){
+  G.level++;G.stage++;
+  const r=REALMS[G.realmIdx];
+  if(G.stage>r.st){
+    G.stage=1;
+    const oldIdx=G.realmIdx;
+    G.realmIdx=Math.min(G.realmIdx+1,REALMS.length-1);
+    G.expNext=Math.floor(REALMS[G.realmIdx].expBase);
+    showBreakthrough();
   } else {
-    notify('🎒 Không thể sử dụng vật phẩm này trực tiếp');
+    G.expNext=Math.floor(G.expNext*1.9+G.level*100);
+    notify(`🌟 ${REALMS[G.realmIdx].vn} Tầng ${G.stage}!`,'var(--jade)');
   }
-};
+  G.hpMax+=40+G.realmIdx*25;G.mpMax+=15+G.realmIdx*12;
+  G.hp=G.hpMax;G.mp=G.mpMax;
+  G.atk+=3+G.realmIdx;G.def+=2+G.realmIdx;
+  G.spd++;G.int+=2+G.realmIdx;G.str+=2;
+  renderRealm();renderStats();renderCharSvg();
+}
 
-// ========== UI ==========
-window.switchTab = (name) => {
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    const tabs = ['cultivate','explore','skills','shop'];
-    t.classList.toggle('active', tabs[i] === name);
-  });
-  document.querySelectorAll('.tab-content').forEach(c => {
-    c.classList.toggle('active', c.id === 'tab-'+name);
-  });
-};
+function showBreakthrough(){
+  document.getElementById('btRealmTxt').textContent=`🎉 Đột phá thành công: ${REALMS[G.realmIdx].vn}!`;
+  document.getElementById('btOverlay').classList.add('vis');
+  spawnBurstParticles();
+  saveGame();
+}
+window.closeBT=()=>document.getElementById('btOverlay').classList.remove('vis');
 
-let notifTimer;
-window.notify = (msg) => {
-  const el = document.getElementById('notification');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(notifTimer);
-  notifTimer = setTimeout(() => el.classList.remove('show'), 2800);
-};
-
-// ========== VISUAL FX ==========
-function createParticles() {
-  const container = document.getElementById('particles');
-  for(let i=0;i<40;i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random()*3+1;
-    const hue = Math.random() > 0.5 ? '180' : '45';
-    p.style.cssText = `
-      width:${size}px;height:${size}px;
-      left:${Math.random()*100}%;
-      background:hsl(${hue},100%,70%);
-      box-shadow:0 0 ${size*3}px hsl(${hue},100%,60%);
-      animation-duration:${Math.random()*15+10}s;
-      animation-delay:${Math.random()*10}s;
-    `;
-    container.appendChild(p);
+/* ======================================================
+   SUB-SYSTEMS: BODY & SWORD
+   ====================================================== */
+function gainBodyExp(amt){
+  G.bodyExp+=amt;
+  if(G.bodyExp>=G.bodyExpNext){
+    G.bodyExp-=G.bodyExpNext;
+    G.bodyLvl=Math.min(G.bodyLvl+1,BODY_STAGES.length);
+    G.bodyExpNext=Math.floor(G.bodyExpNext*2.2);
+    G.def+=8;G.str+=10;G.hpMax+=60;
+    notify(`💪 Thể Tu: ${BODY_STAGES[G.bodyLvl-1]}!`,'var(--earth)');
+  }
+}
+function gainSwordExp(amt){
+  G.swordExp+=amt;
+  if(G.swordExp>=G.swordExpNext){
+    G.swordExp-=G.swordExpNext;
+    G.swordLvl=Math.min(G.swordLvl+1,SWORD_GRADES.length);
+    G.swordExpNext=Math.floor(G.swordExpNext*2.2);
+    G.atk+=10;G.spd+=5;
+    notify(`⚔️ Kiếm Tu: ${SWORD_GRADES[G.swordLvl-1]}!`,'var(--ice)');
   }
 }
 
-function createIslands() {
-  const container = document.getElementById('islands');
-  const configs = [
-    {w:300,h:80,t:15,l:5,d:6},
-    {w:200,h:60,t:30,l:70,d:8},
-    {w:150,h:50,t:50,l:40,d:10},
-    {w:250,h:70,t:65,l:15,d:7},
-    {w:180,h:55,t:20,l:55,d:9},
+/* ======================================================
+   PATHS TAB
+   ====================================================== */
+function renderPaths(){
+  const w=document.getElementById('pathsWrap');
+  const sections=[
+    {title:'💪 Luyện Thể',icon:'💪',sub:'Thể tu đệ nhất, kim cương bất hoại',
+     color:'var(--earth)',stages:BODY_STAGES,cur:G.bodyLvl,
+     desc:'Rèn luyện thân thể đến cực hạn, tăng DEF và STR mạnh',
+     btnTxt:'Rèn Luyện (+100 EXP thể)',btnFn:'trainBody()'},
+    {title:'⚔️ Luyện Kiếm',icon:'⚔️',sub:'Kiếm đạo vô cực, nhất kiếm siêu xuất',
+     color:'var(--ice)',stages:SWORD_GRADES,cur:G.swordLvl,
+     desc:'Đạt đến kiếm đạo tối cao, tăng ATK và SPD mạnh',
+     btnTxt:'Luyện Kiếm (+80 EXP kiếm)',btnFn:'trainSword()'},
+    {title:'⚗️ Luyện Đan',icon:'⚗️',sub:'Đan đạo tinh thâm, tế thế cứu người',
+     color:'#a0c060',stages:DAN_GRADES,cur:G.danLvl,
+     desc:'Nâng cao hiệu quả đan dược và INT đáng kể',
+     btnTxt:'Luyện Đan (+60 EXP đan)',btnFn:'trainDan()'},
   ];
-  configs.forEach(c => {
-    const el = document.createElement('div');
-    el.className = 'island';
-    el.style.cssText = `width:${c.w}px;height:${c.h}px;top:${c.t}%;left:${c.l}%;animation-duration:${c.d}s;`;
-    container.appendChild(el);
+  w.innerHTML=sections.map(s=>`
+    <div class="path-section" style="border-color:${s.color}30">
+      <div class="path-section-header">
+        <div class="ps-icon">${s.icon}</div>
+        <div><h3 style="color:${s.color}">${s.title}</h3><p>${s.sub}</p></div>
+      </div>
+      <p style="font-size:0.7rem;color:var(--tx3);margin-bottom:10px">${s.desc}</p>
+      <div class="path-stages">${s.stages.map((st,i)=>
+        `<div class="ps-stage ${i<s.cur-1?'done':i===s.cur-1?'current':''}">${st}</div>`).join('')}
+      </div>
+      <button class="path-train-btn" style="background:${s.color}18;border-color:${s.color}40;color:${s.color}"
+        onclick="${s.btnFn}">${s.btnTxt}</button>
+    </div>`).join('');
+}
+
+window.trainBody=()=>{gainBodyExp(100);renderStats();renderPaths();notify('💪 Rèn thể +100 EXP!','var(--earth)');};
+window.trainSword=()=>{gainSwordExp(80);renderStats();renderPaths();notify('⚔️ Luyện kiếm +80 EXP!','var(--ice)');};
+window.trainDan=()=>{
+  G.danExp+=60;
+  if(G.danExp>=G.danExpNext){G.danExp-=G.danExpNext;G.danLvl=Math.min(G.danLvl+1,DAN_GRADES.length);G.danExpNext=Math.floor(G.danExpNext*2);G.int+=6;notify(`⚗️ Đan Tu: ${DAN_GRADES[G.danLvl-1]}!`,'#a0c060');}
+  renderPaths();renderStats();notify('⚗️ Luyện đan +60 EXP!','#a0c060');
+};
+
+/* ======================================================
+   SKILLS
+   ====================================================== */
+function renderSkillList(){
+  const el=document.getElementById('skillList');
+  el.innerHTML=SKILLS.map((sk,i)=>{
+    const owned=G.skills.includes(i);
+    const lvl=G.skillLevels[i]||0;
+    const upCost=owned?lvl*80:sk.cost;
+    return `<div class="sk-card">
+      <div class="sk-ico" style="background:${sk.color}20;border-color:${sk.color}40">
+        <span>${sk.icon}</span>
+      </div>
+      <div class="sk-info">
+        <h4 style="color:${sk.color}">${sk.name}</h4>
+        <p>${sk.desc}</p>
+        <div class="sk-lvl">${owned?`⭐ Cấp ${lvl} · Sát thương: ${sk.dmg*lvl} · MP: ${sk.mp}`:'🔒 Chưa học'}</div>
+      </div>
+      <div class="sk-side">
+        <button class="btn-learn btn-learn-jade" 
+          ${!owned&&G.gold<sk.cost?'disabled':''} 
+          onclick="learnSkill(${i})">
+          ${owned?`▲ Nâng (${upCost}💎)`:`📖 Học (${sk.cost}💎)`}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.learnSkill=i=>{
+  const sk=SKILLS[i];
+  const owned=G.skills.includes(i);
+  if(!owned){
+    if(G.gold<sk.cost){notify('⚠️ Không đủ Linh Thạch!');return;}
+    G.gold-=sk.cost;G.skills.push(i);G.skillLevels[i]=1;
+    notify(`📖 Học thành công: ${sk.name}`,'var(--jade)');
+  } else {
+    const lvl=G.skillLevels[i];const cost=lvl*80;
+    if(G.gold<cost){notify(`⚠️ Cần ${cost} 💎`);return;}
+    G.gold-=cost;G.skillLevels[i]=lvl+1;
+    notify(`⭐ Nâng: ${sk.name} → Cấp ${lvl+1}`,'var(--gold)');
+  }
+  renderSkillList();renderArena();renderStats();saveGame();
+};
+
+/* ======================================================
+   SECT MISSIONS
+   ====================================================== */
+function renderSectMissions(){
+  const sect=SECTS.find(s=>s.id===G.sectId);
+  if(!sect) return;
+  const el=document.getElementById('sectMissionPanel');
+  const prog=G.sectMissionsProgress||{};
+  el.innerHTML=`
+    <div style="padding:16px;text-align:center;background:${sect.glowColor}12;border:1px solid ${sect.glowColor}30;border-radius:12px;margin-bottom:12px;">
+      <div style="font-size:2rem">${sect.icon}</div>
+      <div style="font-family:var(--f-title);font-size:1.6rem;color:${sect.glowColor}">${sect.name}</div>
+      <div style="font-size:0.8rem;color:var(--tx2);margin-top:4px">${sect.vn} · ${sect.type}</div>
+    </div>
+    <div class="mission-list">
+    ${sect.missions.map((m,i)=>{
+      const p=prog[i]||0;const total=5;const done=p>=total;
+      return `<div class="mission-card">
+        <div class="mission-icon">${done?'✅':'📋'}</div>
+        <div class="mission-body">
+          <h4 style="color:${done?'var(--jade)':'var(--tx1)'}">${m}</h4>
+          <p>Nhiệm vụ tông môn ${done?'(Đã hoàn thành)':'(Đang thực hiện)'}</p>
+          <div class="prog">
+            <span>${p}/${total}</span>
+            <div class="prog-bar-sm"><div class="fill" style="width:${p/total*100}%;background:${sect.glowColor}"></div></div>
+          </div>
+        </div>
+        <div class="mission-reward">
+          <div class="mr-exp">+${(i+1)*200} EXP</div>
+          <div class="mr-gold">+${(i+1)*100} 💎</div>
+          ${done?'':'<button class="btn-mission" style="background:'+sect.glowColor+'18;border:1px solid '+sect.glowColor+'40;color:'+sect.glowColor+'" onclick="doMission('+i+')">Tiến Hành</button>'}
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+window.doMission=i=>{
+  if(!G.sectMissionsProgress) G.sectMissionsProgress={};
+  const p=(G.sectMissionsProgress[i]||0)+1;
+  G.sectMissionsProgress[i]=p;
+  const sect=SECTS.find(s=>s.id===G.sectId);
+  if(p>=5){
+    gainExp((i+1)*200);G.gold+=(i+1)*100;
+    notify(`✅ Hoàn thành nhiệm vụ: ${sect.missions[i]}!`,'var(--gold)');
+  } else {
+    notify(`📋 Tiến độ: ${p}/5`);
+  }
+  renderSectMissions();renderStats();saveGame();
+};
+
+function updateSectMissionProg(type,v){
+  if(!G.sectMissionsProgress) G.sectMissionsProgress={};
+  if(type==='kill') {G.sectMissionsProgress[0]=(G.sectMissionsProgress[0]||0)+v;}
+}
+
+/* ======================================================
+   ARENA
+   ====================================================== */
+function renderArena(){
+  const el=document.getElementById('skillPickGrid');
+  el.innerHTML=G.skills.map(i=>{
+    const sk=SKILLS[i];const lvl=G.skillLevels[i]||1;
+    const picked=G.pickedSkills.includes(i);
+    return `<div class="sp-card${picked?' picked':''}" onclick="togglePick(${i})">
+      <span class="sp-ico" style="filter:drop-shadow(0 0 6px ${sk.color}80)">${sk.icon}</span>
+      <span class="sp-name" style="color:${sk.color}">${sk.name.split(' ').slice(0,2).join(' ')}</span>
+      <span class="sp-dmg">DMG: ${sk.dmg*lvl}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('arenaRankTxt').textContent=`#${getArenaRank()}`;
+  document.getElementById('pickCountTxt').textContent=`${G.pickedSkills.length}/3`;
+  document.getElementById('pickedNum').textContent=G.pickedSkills.length;
+  document.getElementById('btnFightArena').disabled=G.pickedSkills.length!==3;
+}
+
+function getArenaRank(){
+  if(G.arenaPoints>=2000) return '1~10';
+  if(G.arenaPoints>=1000) return '11~50';
+  if(G.arenaPoints>=500) return '51~200';
+  if(G.arenaPoints>=200) return '201~500';
+  return '500+';
+}
+
+window.togglePick=i=>{
+  const idx=G.pickedSkills.indexOf(i);
+  if(idx>=0){G.pickedSkills.splice(idx,1);}
+  else if(G.pickedSkills.length<3){G.pickedSkills.push(i);}
+  else{notify('⚠️ Chỉ chọn tối đa 3 chiêu!');return;}
+  renderArena();
+};
+
+window.fightArena=()=>{
+  if(G.pickedSkills.length!==3){notify('⚠️ Phải chọn đúng 3 chiêu!');return;}
+  const log=document.getElementById('arenaLog');log.classList.add('vis');log.innerHTML='';
+  // Generate opponent
+  const oppNames=['Thiên Ảnh','Linh Long','Huyết Vũ','Bạch Lôi','Minh Nguyệt','Hắc Phong','Tử Tiêu'];
+  const oppName=oppNames[Math.floor(Math.random()*oppNames.length)];
+  const oppAtk=Math.floor(G.atk*(0.8+Math.random()*0.6));
+  const oppHp=Math.floor(G.hpMax*(0.9+Math.random()*0.4));
+  let pHp=G.hp,oHp=oppHp;
+  const addLog=(t,c)=>{const d=document.createElement('div');d.className='ll '+c;d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;};
+  addLog(`⚔️ Đấu trường! ${G.name} VS ${oppName}!`,'ll-sys');
+  let round=0;
+  const go=setInterval(()=>{
+    round++;
+    // Use picked skill
+    const skIdx=G.pickedSkills[round%3];
+    const sk=SKILLS[skIdx];const lvl=G.skillLevels[skIdx]||1;
+    const dmg=Math.floor(sk.dmg*lvl*(0.9+Math.random()*0.4));
+    const crit=Math.random()<G.lck*0.02;
+    const finalDmg=crit?Math.floor(dmg*2.2):dmg;
+    oHp-=finalDmg;
+    addLog(`${sk.icon} ${sk.name}: -${finalDmg}${crit?' 💥CHÍ MẠNG!':''}`,'ll-dmg');
+    if(oHp<=0){
+      clearInterval(go);
+      const gain=Math.floor(20+G.level*3);
+      G.arenaPoints+=gain;G.arenaWins++;
+      addLog(`🏆 Chiến thắng! +${gain} điểm đấu trường!`,'ll-exp');
+      addLog(`💪 ${G.name} vinh quang!`,'ll-gold');
+      saveGame();loadArenaLeaderboard();renderArena();return;
+    }
+    const oppDmg=Math.floor(oppAtk*(0.7+Math.random()*0.5));
+    pHp-=oppDmg;
+    addLog(`💢 ${oppName} phản đòn: -${oppDmg}`,'ll-dmg');
+    if(pHp<=0||round>=12){
+      clearInterval(go);
+      if(pHp<=0){
+        const lose=Math.floor(10+G.level);G.arenaPoints=Math.max(0,G.arenaPoints-lose);G.arenaLosses++;
+        addLog(`💀 Thua cuộc! -${lose} điểm...`,'ll-sys');
+      } else addLog('⏰ Hết giờ! Hòa trận!','ll-sys');
+      saveGame();loadArenaLeaderboard();renderArena();
+    }
+  },700);
+};
+
+function loadArenaLeaderboard(){
+  const q=query(ref(db,'players'),orderByChild('arenaPoints'),limitToLast(10));
+  onValue(q,snap=>{
+    const entries=[];
+    snap.forEach(c=>{
+      const d=c.val();if(d.arenaPoints) entries.unshift({name:d.name,pts:d.arenaPoints,realm:d.realmIdx||0});
+    });
+    const el=document.getElementById('arenaLbList');
+    el.innerHTML=entries.slice(0,8).map((e,i)=>`
+      <div class="lb-entry">
+        <div class="lb-rank ${i===0?'r1':i===1?'r2':i===2?'r3':'rother'}">${i+1}</div>
+        <div class="lb-info">
+          <div class="lbname">${e.name}</div>
+          <div class="lbrealm">${REALMS[Math.min(e.realm,REALMS.length-1)].vn}</div>
+        </div>
+        <div class="lb-pts">${e.pts}pts</div>
+      </div>`).join('')||'<div style="font-size:0.72rem;color:var(--tx3);text-align:center;padding:8px">Chưa có dữ liệu</div>';
   });
 }
 
-function addParticlesBurst() {
-  const container = document.getElementById('particles');
-  for(let i=0;i<20;i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.cssText = `
-      width:4px;height:4px;
-      left:${40+Math.random()*20}%;
-      background:gold;
-      box-shadow:0 0 10px gold;
-      animation-duration:${Math.random()*3+2}s;
-      animation-delay:${Math.random()*0.5}s;
-    `;
-    container.appendChild(p);
-    setTimeout(() => p.remove(), 5000);
+/* ======================================================
+   SHOP
+   ====================================================== */
+function renderShop(cat){
+  const grid=document.getElementById('shopGrid');
+  const items=SHOP_ITEMS[cat]||[];
+  grid.innerHTML=items.map((item,i)=>`
+    <div class="sitem" onclick="buyItem('${cat}',${i})">
+      <span class="si-ico">${item.icon}</span>
+      <div class="si-name">${item.name}</div>
+      <div class="si-desc">${item.desc}</div>
+      <div class="si-price">💎 ${item.price}</div>
+    </div>`).join('');
+}
+window.swShop=(cat,el)=>{
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');renderShop(cat);
+};
+window.buyItem=(cat,i)=>{
+  const item=SHOP_ITEMS[cat][i];
+  if(G.gold<item.price){notify(`⚠️ Cần ${item.price} 💎`);return;}
+  G.gold-=item.price;
+  const e=item.effect;
+  if(e==='hp'){G.hp=Math.min(G.hpMax,G.hp+item.val);notify(`🍵 +${item.val} HP!`);}
+  else if(e==='mp'){G.mp=Math.min(G.mpMax,G.mp+item.val);notify(`💊 +${item.val} MP!`);}
+  else if(e==='exp'){gainExp(item.val);notify(`⬆️ +${item.val} EXP!`);}
+  else if(e==='hpmax'){G.hpMax+=item.val;G.hp+=item.val;notify(`💖 HP Max +${item.val}!`);}
+  else if(e==='mpmax'){G.mpMax+=item.val;G.mp+=item.val;notify(`💠 MP Max +${item.val}!`);}
+  else if(e==='boost'){
+    G.boostPct=item.val;G.boostEnd=Date.now()+60000;
+    notify(`💎 +${item.val}% EXP trong 60s!`,'var(--gold)');
+    setTimeout(()=>{G.boostPct=0;notify('💎 Buff tốc độ hết hiệu lực');},60000);
+  }
+  else if(e==='atk'){G.atk+=item.val;notify(`⚔️ +${item.val} Công!`);}
+  else if(e==='def'){G.def+=item.val;notify(`🛡 +${item.val} Thủ!`);}
+  else if(e==='body_exp'){gainBodyExp(item.val);notify(`💪 +${item.val} thể exp!`);}
+  else if(e==='sword_exp'){gainSwordExp(item.val);notify(`⚔️ +${item.val} kiếm exp!`);}
+  else if(e==='all_stat'){['atk','def','spd','lck','int','str'].forEach(k=>G[k]+=item.val);notify(`🌈 +${item.val} tất cả!`);}
+  else if(e==='arena_pts'){G.arenaPoints+=item.val;notify(`🏆 +${item.val} điểm đấu trường!`);}
+  else if(e==='skill_up'){
+    if(G.skills.length>0){const i=G.skills[0];G.skillLevels[i]=(G.skillLevels[i]||1)+1;notify(`💠 ${SKILLS[i].name} tự động nâng cấp!`);}
+  }
+  else if(e==='dan_exp'){G.danExp+=item.val;notify(`⚗️ +${item.val} đan exp!`);}
+  renderStats();saveGame();
+};
+
+/* ======================================================
+   INVENTORY
+   ====================================================== */
+function renderInventory(){
+  document.getElementById('invCnt').textContent=G.inventory.length;
+  const el=document.getElementById('invList');
+  if(!G.inventory.length){el.innerHTML='<div style="text-align:center;color:var(--tx3);font-size:0.72rem;padding:8px">Túi đồ trống...</div>';return;}
+  el.innerHTML=G.inventory.map((it,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px;border:1px solid rgba(0,229,200,0.08);border-radius:6px;margin-bottom:4px;cursor:pointer;font-size:0.72rem"
+      onclick="useInvItem(${i})">
+      <span>${it.icon}</span>
+      <span style="flex:1">${it.name}</span>
+      <span style="color:var(--jade);font-size:0.62rem">Dùng</span>
+    </div>`).join('');
+}
+window.useInvItem=i=>{
+  const it=G.inventory[i];if(!it)return;
+  if(it.name.includes('Đan')||it.name.includes('Dược')){
+    G.hp=Math.min(G.hpMax,G.hp+100);
+    notify(`🍵 ${it.name}: +100 HP`);
+    G.inventory.splice(i,1);
+  } else if(it.name.includes('Tinh')){
+    gainExp(200);notify(`⚗️ ${it.name}: +200 EXP`);
+    G.inventory.splice(i,1);
+  } else {notify('📦 Không thể dùng trực tiếp');}
+  renderInventory();renderStats();
+};
+
+/* ======================================================
+   WORLD EVENTS & UI HELPERS
+   ====================================================== */
+function renderWorldEvents(){
+  const el=document.getElementById('worldEvList');
+  el.innerHTML=WORLD_EVENTS_LIST.map((ev,i)=>`
+    <div class="ev-item" style="border-color:${ev.color}">
+      <div class="ev-time">${i*3+1} phút trước</div>
+      <div class="ev-msg">${ev.icon} ${ev.msg}</div>
+    </div>`).join('');
+}
+
+window.swTab=(id,el)=>{
+  document.querySelectorAll('.tnav').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.tcontent').forEach(c=>c.classList.toggle('on',c.id==='tc-'+id));
+};
+
+let _notifTimer;
+window.notify=(msg,color='var(--jade)')=>{
+  const el=document.getElementById('notif');
+  el.textContent=msg;el.style.color=color;el.style.borderColor=color.replace('var(--jade)','hsl(172,60%,35%)');
+  el.classList.add('vis');clearTimeout(_notifTimer);
+  _notifTimer=setTimeout(()=>el.classList.remove('vis'),2800);
+};
+
+/* ======================================================
+   VISUAL FX
+   ====================================================== */
+function initStars(){
+  const c=document.getElementById('starsCanvas');
+  const ctx=c.getContext('2d');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  for(let i=0;i<200;i++){
+    const x=Math.random()*c.width,y=Math.random()*c.height;
+    const r=Math.random()*1.2,a=Math.random()*0.8+0.2;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(200,220,255,${a})`;ctx.fill();
   }
 }
 
-createParticles();
-createIslands();
+function initMountains(){
+  const el=document.getElementById('mountains');
+  el.innerHTML=`<svg viewBox="0 0 1440 300" preserveAspectRatio="none" style="width:100%;height:100%">
+    <defs>
+      <linearGradient id="mg1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="hsl(220,50%,8%)"/>
+        <stop offset="100%" stop-color="hsl(220,40%,5%)"/>
+      </linearGradient>
+      <linearGradient id="mg2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="hsl(210,45%,10%)"/>
+        <stop offset="100%" stop-color="hsl(210,35%,6%)"/>
+      </linearGradient>
+      <linearGradient id="mg3" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="hsl(200,40%,12%)"/>
+        <stop offset="100%" stop-color="hsl(200,30%,7%)"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,220 L120,80 L240,160 L380,20 L520,140 L660,60 L800,180 L940,40 L1080,160 L1220,70 L1360,150 L1440,90 L1440,300 L0,300Z" fill="url(#mg1)"/>
+    <path d="M0,260 L100,160 L200,220 L320,100 L440,200 L560,140 L680,240 L800,120 L920,220 L1040,140 L1160,260 L1280,160 L1440,220 L1440,300 L0,300Z" fill="url(#mg2)"/>
+    <path d="M0,280 L160,200 L320,260 L480,180 L640,270 L800,200 L960,280 L1120,210 L1280,280 L1440,240 L1440,300 L0,300Z" fill="url(#mg3)"/>
+  </svg>`;
+}
+
+function spawnSpores(){
+  const c=document.getElementById('scene');
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');
+    p.className='spore';
+    const s=Math.random()*2.5+0.5;
+    const hue=Math.random()>0.6?172:42;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;
+      background:hsl(${hue},100%,70%);box-shadow:0 0 ${s*4}px hsl(${hue},100%,60%);
+      animation-duration:${12+Math.random()*15}s;animation-delay:${Math.random()*12}s;`;
+    c.appendChild(p);
+  }
+}
+
+function spawnBurstParticles(){
+  const c=document.getElementById('scene');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');p.className='spore';
+    p.style.cssText=`width:3px;height:3px;left:${40+Math.random()*20}%;
+      background:gold;box-shadow:0 0 8px gold;
+      animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*0.3}s;`;
+    c.appendChild(p);setTimeout(()=>p.remove(),5000);
+  }
+}
+
+window.addEventListener('resize',()=>{initStars();});
+initStars();initMountains();spawnSpores();
 </script>
 </body>
 </html>
